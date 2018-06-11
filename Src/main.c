@@ -112,6 +112,8 @@ int main(void)
   MX_DMA_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
+  MX_TIM2_Init();
+  HAL_TIM_Base_Start_IT(&htim2);
   MX_TIM8_Init();
   MX_UART4_Init();
   MX_USART1_UART_Init();

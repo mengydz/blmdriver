@@ -75,6 +75,15 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                 
 
 /* USER CODE BEGIN Prototypes */
+void MX_TIM2_Init(void);
+
+/* USER CODE BEGIN Prototypes */
+uint64_t micros();
+uint32_t millis();
+void delay_us(uint32_t nus);
+
+extern TIM_HandleTypeDef htim2;
+extern volatile uint32_t glo_50ms;
 
 /* USER CODE END Prototypes */
 

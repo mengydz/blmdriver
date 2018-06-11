@@ -104,6 +104,7 @@
 #define configMINIMAL_STACK_SIZE                 ((uint16_t)128)
 #define configTOTAL_HEAP_SIZE                    ((size_t)15360)
 #define configMAX_TASK_NAME_LEN                  ( 16 )
+#define configUSE_TRACE_FACILITY                 1
 #define configUSE_16_BIT_TICKS                   0
 #define configUSE_MUTEXES                        1
 #define configQUEUE_REGISTRY_SIZE                8
@@ -111,6 +112,13 @@
 #define configUSE_COUNTING_SEMAPHORES            1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
 #define configUSE_TASK_NOTIFICATIONS             0
+
+extern uint64_t micros();
+extern uint32_t millis();
+
+#define configGENERATE_RUN_TIME_STATS     		 	1
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()	__asm volatile(" nop\n")
+#define portGET_RUN_TIME_COUNTER_VALUE()			micros()
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                    0
@@ -128,6 +136,7 @@ to exclude the API function. */
 #define INCLUDE_xTaskGetSchedulerState      1
 #define INCLUDE_uxTaskGetStackHighWaterMark 1
 #define INCLUDE_xTaskGetCurrentTaskHandle   1
+#define INCLUDE_eTaskGetState               1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
