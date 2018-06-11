@@ -53,10 +53,10 @@
 #include "adc.h"
 #include "dma.h"
 #include "tim.h"
-#include "usart.h"
-#include "gpio.h"
 
 /* USER CODE BEGIN Includes */
+#include "pios_com.h"
+#include "protocol.h"
 
 /* USER CODE END Includes */
 
@@ -104,20 +104,24 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  BoardLedGpioInit(GetBoardLedGpioCfg());
+  GimbalMotorSwitchGpioInit();
+  GimbalBoardCfgCom((uint32_t)hal.usart0,USART_CONSOLE_RX_BUF,COM_USART_CONSOLE_RX_BUF_LEN,USART_CONSOLE_TX_BUF,COM_USART_CONSOLE_TX_BUF_LEN,&usart_driver,&comDebugId,false);
+  systemPrintfInit();
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_ADC1_Init();
-  MX_ADC2_Init();
-  MX_TIM2_Init();
-  HAL_TIM_Base_Start_IT(&htim2);
-  MX_TIM8_Init();
-  MX_UART4_Init();
-  MX_USART1_UART_Init();
-  MX_USART3_UART_Init();
+//  MX_GPIO_Init();
+//  MX_DMA_Init();
+//  MX_ADC1_Init();
+//  MX_ADC2_Init();
+//  MX_TIM2_Init();
+//  HAL_TIM_Base_Start_IT(&htim2);
+//  MX_TIM8_Init();
+//  MX_UART4_Init();
+//  MX_USART1_UART_Init();
+//  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
