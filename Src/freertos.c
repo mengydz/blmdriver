@@ -1,157 +1,173 @@
-/**
-  ******************************************************************************
-  * File Name          : freertos.c
-  * Description        : Code for freertos applications
-  ******************************************************************************
-  * This notice applies to any and all portions of this file
-  * that are not between comment pairs USER CODE BEGIN and
-  * USER CODE END. Other portions of this file, whether 
-  * inserted by the user or by software development tools
-  * are owned by their respective copyright owners.
-  *
-  * Copyright (c) 2018 STMicroelectronics International N.V. 
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without 
-  * modification, are permitted, provided that the following conditions are met:
-  *
-  * 1. Redistribution of source code must retain the above copyright notice, 
-  *    this list of conditions and the following disclaimer.
-  * 2. Redistributions in binary form must reproduce the above copyright notice,
-  *    this list of conditions and the following disclaimer in the documentation
-  *    and/or other materials provided with the distribution.
-  * 3. Neither the name of STMicroelectronics nor the names of other 
-  *    contributors to this software may be used to endorse or promote products 
-  *    derived from this software without specific written permission.
-  * 4. This software, including modifications and/or derivative works of this 
-  *    software, must execute solely and exclusively on microcontroller or
-  *    microprocessor devices manufactured by or for STMicroelectronics.
-  * 5. Redistribution and use of this software other than as permitted under 
-  *    this license is void and will automatically terminate your rights under 
-  *    this license. 
-  *
-  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
-  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
-  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
-  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
-  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
-  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
-  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
-  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  *
-  ******************************************************************************
-  */
-
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-
+#include "gpio.h"
+#include "string.h"
+#include "usart.h"
+#include "cpu_utils.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
 osThreadId defaultTaskHandle;
-osThreadId myTask02Handle;
-osMessageQId myQueue01Handle;
-osSemaphoreId myBinarySem01Handle;
 
 /* USER CODE BEGIN Variables */
 
-/* USER CODE END Variables */
+#define START_TASK_PRIO           1
+#define START_STK_SIZE            64
+TaskHandle_t xHandleTaskStart;
+void StartTask(void const * argument);
 
-/* Function prototypes -------------------------------------------------------*/
-void StartDefaultTask(void const * argument);
-void StartTask02(void const * argument);
+#define LED1_TASK_PRIO            31
+#define LED1_STK_SIZE             256
+TaskHandle_t xHandleTaskLED1;
+void TaskLED1(void const * argument);
 
-void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+#define LED2_TASK_PRIO            30
+#define LED2_STK_SIZE             256
+TaskHandle_t xHandleTaskLED2;
+void TaskLED2(void const * argument);
 
-/* USER CODE BEGIN FunctionPrototypes */
+#define LED3_TASK_PRIO            29
+#define LED3_STK_SIZE             256
+TaskHandle_t xHandleTaskLED3;
+void TaskLED3(void const * argument);
 
-/* USER CODE END FunctionPrototypes */
-
-/* Hook prototypes */
-
-/* Init FreeRTOS */
+#define LED4_TASK_PRIO            28
+#define LED4_STK_SIZE             256
+TaskHandle_t xHandleTaskLED4;
+void TaskLED4(void const * argument);
 
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
-       
-  /* USER CODE END Init */
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* Create the semaphores(s) */
-  /* definition and creation of myBinarySem01 */
-  osSemaphoreDef(myBinarySem01);
-  myBinarySem01Handle = osSemaphoreCreate(osSemaphore(myBinarySem01), 1);
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
-  defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
-
-  /* definition and creation of myTask02 */
-  osThreadDef(myTask02, StartTask02, osPriorityIdle, 0, 128);
-  myTask02Handle = osThreadCreate(osThread(myTask02), NULL);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* Create the queue(s) */
-  /* definition and creation of myQueue01 */
-/* what about the sizeof here??? cd native code */
-  osMessageQDef(myQueue01, 16, uint16_t);
-  myQueue01Handle = osMessageCreate(osMessageQ(myQueue01), NULL);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
+  //创建开始任务
+  xTaskCreate((TaskFunction_t )StartTask,
+        (const char *  )"Start Task",
+        (uint16_t       )START_STK_SIZE,
+        (void *         )NULL,
+        (UBaseType_t    )START_TASK_PRIO,
+        (TaskHandle_t * )&xHandleTaskStart);
   /* USER CODE END RTOS_QUEUES */
 }
 
-/* StartDefaultTask function */
-void StartDefaultTask(void const * argument)
+//开始任务，用于创建两个新的测试任务
+void StartTask(void const * argument)
 {
+  taskENTER_CRITICAL();
+  xTaskCreate((TaskFunction_t )TaskLED1,
+              (const char *  )"LED1 Task",
+              (uint16_t       )LED1_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )LED1_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskLED1);
 
-  /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
-  for(;;)
+  xTaskCreate((TaskFunction_t )TaskLED2,
+              (const char *  )"LED2 Task",
+              (uint16_t       )LED2_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )LED2_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskLED2);
+
+  xTaskCreate((TaskFunction_t )TaskLED3,
+              (const char *  )"LED3 Task",
+              (uint16_t       )LED3_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )LED3_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskLED3);
+
+  xTaskCreate((TaskFunction_t )TaskLED4,
+              (const char *  )"LED4 Task",
+              (uint16_t       )LED4_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )LED4_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskLED4);
+
+  vTaskDelete(xHandleTaskStart);
+  taskEXIT_CRITICAL();
+}
+uint16_t usage = 0;
+//LED1任务
+void TaskLED1(void const * argument)
+{
+  portTickType xLastWakeTime;
+//  static uint16_t usage = 0;
+  uint32_t num  = 0;
+  char buffer[100];
+  //延时时间单元初始值记录
+  xLastWakeTime = xTaskGetTickCount();
+  while(1)
   {
-    osDelay(1);
+    //获取CPU使用率并串口打印
+    usage = osGetCPUUsage();
+    num = sprintf(buffer,"cpu usage:%d%%\r\n",usage);
+
+    HAL_UART_Transmit(&huart1,(uint8_t *)buffer,num,0xFFFF);
+    while(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_TC)!=SET);
+    vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));
   }
-  /* USER CODE END StartDefaultTask */
 }
 
-/* StartTask02 function */
-void StartTask02(void const * argument)
+//LED2任务
+void TaskLED2(void const * argument)
 {
-  /* USER CODE BEGIN StartTask02 */
-  /* Infinite loop */
-  for(;;)
+  portTickType xLastWakeTime;
+
+  static  uint16_t usage = 0;
+  uint32_t num  = 0;
+  char buffer[100];
+
+  //延时时间单元初始值记录
+  xLastWakeTime = xTaskGetTickCount();
+  while(1)
   {
-    osDelay(1);
+    //LED闪烁
+	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_0);
+    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+    HAL_Delay(100);
   }
-  /* USER CODE END StartTask02 */
 }
 
-/* USER CODE BEGIN Application */
-     
+//LED3任务
+void TaskLED3(void const * argument)
+{
+  portTickType xLastWakeTime;
+
+  static  uint16_t usage = 0;
+  uint32_t num  = 0;
+  char buffer[100];
+
+  //延时时间单元初始值记录
+  xLastWakeTime = xTaskGetTickCount();
+  while(1)
+  {
+    //LED闪烁
+	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_1);
+    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+    HAL_Delay(100);
+  }
+}
+
+//LED4任务
+void TaskLED4(void const * argument)
+{
+  portTickType xLastWakeTime;
+
+  static  uint16_t usage = 0;
+  uint32_t num  = 0;
+  char buffer[100];
+
+  //延时时间单元初始值记录
+  xLastWakeTime = xTaskGetTickCount();
+  while(1)
+  {
+    //LED闪烁
+	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_2);
+    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+    HAL_Delay(200);
+  }
+}
 /* USER CODE END Application */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
