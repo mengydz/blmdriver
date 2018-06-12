@@ -277,13 +277,13 @@ void systemPrintfInit(void)
 //Task任务
 void ProtocolTask(void const * argument)
 {
-  portTickType xLastWakeTime;
+  static portTickType xLastWakeTime;
   uint32_t tick = 0;
   xLastWakeTime = xTaskGetTickCount();
   gbSendDelay = 2000;
   while(1)
   {
-    vTaskDelayUntil(&xLastWakeTime,(portTICK_RATE_MS));
+    vTaskDelayUntil(&xLastWakeTime,portTICK_RATE_MS);
 	tick++;
 	if(!transparent_enable)
 	{
@@ -291,9 +291,6 @@ void ProtocolTask(void const * argument)
         {
             gbRxHandle();
         }
-	}else
-	{
-
 	}
 
 	gbTxTrig(tick);

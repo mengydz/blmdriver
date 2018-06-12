@@ -23,103 +23,17 @@ ModulesStatusInfo SysStatusInfo;
 CanardInstance canard;                       ///< The library instance
 static uint8_t canard_memory_pool[2048];            ///< Arena for memory allocation, used by the library
 
-void SetSpeed(void)
+void SetGimbalAngle(void)
 {
 	static uint8_t transfer_id;
-	uint8_t buffer[UAVCAN_GIMBAL_SET_SPEED_MESSAGE_SIZE];
-	for(uint16_t i=0;i<UAVCAN_GIMBAL_SET_SPEED_MESSAGE_SIZE;i++)
+	uint8_t buffer[UAVCAN_AIRDATA_GIMBALCONTROLDATA_MESSAGE_SIZE];
+	for(uint16_t i=0;i<UAVCAN_AIRDATA_GIMBALCONTROLDATA_MESSAGE_SIZE;i++)
 	{
 		buffer[i] = i;
 	}
-	const int bc_res = canardBroadcast(&canard, UAVCAN_GIMBAL_SET_SPEED_TYPE_SIGNATURE,
-			UAVCAN_GIMBAL_SET_SPEED_DATA_TYPE_ID, &transfer_id, CANARD_TRANSFER_PRIORITY_LOW,
-									 buffer, UAVCAN_GIMBAL_SET_SPEED_MESSAGE_SIZE);
-	
-	if(Flag_Statue_Tx == CAN_IDLE)
-	{
-		CAN_HandleTypeDef *hcan = (CAN_HandleTypeDef *)hal_CAN_Gimbal_ID;
-		const CanardCANFrame* txf = canardPeekTxQueue(&canard);
-		Flag_Statue_Tx = CAN_SENDING;
-		memcpy(hcan->pTxMsg,0,sizeof(CanTxMsgTypeDef));
-		hcan->pTxMsg->StdId = 0x0000;
-		hcan->pTxMsg->ExtId = txf->id;
-		hcan->pTxMsg->IDE = CAN_ID_EXT;
-		hcan->pTxMsg->RTR = CAN_RTR_DATA;
-		hcan->pTxMsg->DLC = txf->data_len;
-		memcpy(hcan->pTxMsg->Data, txf->data, hcan->pTxMsg->DLC);
-		HAL_CAN_Transmit_IT(hcan);
-		canardPopTxQueue(&canard);
-	}
-}
-
-void PitchResponse(uint16_t value)
-{
-	static uint8_t transfer_id;
-	uint8_t buffer[UAVCAN_GIMBAL_PIT_RESPONSE_MESSAGE_SIZE];
-
-	buffer[0] = value/256;buffer[1] = value%256;
-	
-	const int bc_res = canardBroadcast(&canard, UAVCAN_GIMBAL_PIT_RESPONSE_TYPE_SIGNATURE,
-			UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID, &transfer_id, CANARD_TRANSFER_PRIORITY_LOW,
-									 buffer, UAVCAN_GIMBAL_PIT_RESPONSE_MESSAGE_SIZE);
-	
-	if(Flag_Statue_Tx == CAN_IDLE)
-	{
-		CAN_HandleTypeDef *hcan = (CAN_HandleTypeDef *)hal_CAN_Gimbal_ID;
-		const CanardCANFrame* txf = canardPeekTxQueue(&canard);
-		Flag_Statue_Tx = CAN_SENDING;
-		memcpy(hcan->pTxMsg,0,sizeof(CanTxMsgTypeDef));
-		hcan->pTxMsg->StdId = 0x0000;
-		hcan->pTxMsg->ExtId = txf->id;
-		hcan->pTxMsg->IDE = CAN_ID_EXT;
-		hcan->pTxMsg->RTR = CAN_RTR_DATA;
-		hcan->pTxMsg->DLC = txf->data_len;
-		memcpy(hcan->pTxMsg->Data, txf->data, hcan->pTxMsg->DLC);
-		HAL_CAN_Transmit_IT(hcan);
-		canardPopTxQueue(&canard);
-	}
-}
-
-void GimbalRequest(void)
-{
-	static uint8_t transfer_id;
-	uint8_t buffer[UAVCAN_GIMBAL_CMD_CONTROL_MESSAGE_SIZE];
-	for(uint16_t i=0;i<UAVCAN_GIMBAL_CMD_CONTROL_MESSAGE_SIZE;i++)
-	{
-		buffer[i] = i;
-	}
-	const int bc_res = canardBroadcast(&canard, UAVCAN_GIMBAL_CMD_CONTROL_TYPE_SIGNATURE,
-			UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID, &transfer_id, CANARD_TRANSFER_PRIORITY_LOW,
-									 buffer, UAVCAN_GIMBAL_CMD_CONTROL_MESSAGE_SIZE);
-	
-	if(Flag_Statue_Tx == CAN_IDLE)
-	{
-		CAN_HandleTypeDef *hcan = (CAN_HandleTypeDef *)hal_CAN_Gimbal_ID;
-		const CanardCANFrame* txf = canardPeekTxQueue(&canard);
-		Flag_Statue_Tx = CAN_SENDING;
-		memcpy(hcan->pTxMsg,0,sizeof(CanTxMsgTypeDef));
-		hcan->pTxMsg->StdId = 0x0000;
-		hcan->pTxMsg->ExtId = txf->id;
-		hcan->pTxMsg->IDE = CAN_ID_EXT;
-		hcan->pTxMsg->RTR = CAN_RTR_DATA;
-		hcan->pTxMsg->DLC = txf->data_len;
-		memcpy(hcan->pTxMsg->Data, txf->data, hcan->pTxMsg->DLC);
-		HAL_CAN_Transmit_IT(hcan);
-		canardPopTxQueue(&canard);
-	}
-}
-
-void GimbalResponse(uint8_t* data)
-{
-	static uint8_t transfer_id;
-	uint8_t buffer[UAVCAN_GIMBAL_INFO_RESPONSE_MESSAGE_SIZE];
-	for(uint16_t i=0;i<UAVCAN_GIMBAL_INFO_RESPONSE_MESSAGE_SIZE;i++)
-	{
-		buffer[i] = *(data+i);
-	}
-	const int bc_res = canardBroadcast(&canard, UAVCAN_GIMBAL_INFO_RESPONSE_TYPE_SIGNATURE,
-			UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID, &transfer_id, CANARD_TRANSFER_PRIORITY_LOW,
-									 buffer, UAVCAN_GIMBAL_INFO_RESPONSE_MESSAGE_SIZE);
+	const int bc_res = canardBroadcast(&canard, UAVCAN_AIRDATA_GIMBALCONTROLDATA_TYPE_SIGNATURE,
+			UAVCAN_AIRDATA_GIMBALCONTROLDATA_DATA_TYPE_ID, &transfer_id, CANARD_TRANSFER_PRIORITY_LOW,
+									 buffer, UAVCAN_AIRDATA_GIMBALCONTROLDATA_MESSAGE_SIZE);
 	
 	if(Flag_Statue_Tx == CAN_IDLE)
 	{
@@ -148,7 +62,7 @@ static void onTransferReceived(CanardInstance* ins,
     {
     	switch (transfer->data_type_id)
     	{
-			case UAVCAN_GIMBAL_SET_SPEED_DATA_TYPE_ID:
+			case UAVCAN_AIRDATA_GIMBALCONTROLDATA_DATA_TYPE_ID:
 			{
 				if(transfer->payload_len <= 7)
 				{//head 0-6
@@ -186,9 +100,9 @@ static bool shouldAcceptTransfer(const CanardInstance* ins,
 	{
 		switch (data_type_id)
 		{
-			case UAVCAN_GIMBAL_SET_SPEED_DATA_TYPE_ID:
+			case UAVCAN_AIRDATA_GIMBALCONTROLDATA_DATA_TYPE_ID:
 			{
-				*out_data_type_signature = UAVCAN_GIMBAL_SET_SPEED_TYPE_SIGNATURE;
+				*out_data_type_signature = UAVCAN_AIRDATA_GIMBALCONTROLDATA_TYPE_SIGNATURE;
 				return true;
 			}
 			default:break;

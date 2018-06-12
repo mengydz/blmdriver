@@ -27,11 +27,8 @@ typedef struct{
 extern uint32_t Hal_Timer_4,Hal_Timer_5,Hal_Timer_6,Hal_Timer_7;
 
 void SysTimerTimInit(uint32_t *timer_tim_id,const GIMBAL_TIM_TIMER_CFG *cfg);
-uint8_t Wait_processing(uint16_t TMS);
 uint64_t GetMicro(void);
 uint32_t GetMillis(void);
-void delay_us(float us);
-void delay_ms(uint16_t ms);
 #ifdef __cplusplus
  }
 #endif

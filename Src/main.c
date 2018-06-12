@@ -55,12 +55,15 @@
 
 /* USER CODE BEGIN Includes */
 #include "adc.h"
+#include "can.h"
 #include "gpio.h"
 #include "uart.h"
 #include "pios_com.h"
 #include "protocol.h"
 #include "timer.h"
 #include "tim_PWM_Output.h"
+#include "canardmain.h"
+#include "notify.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -111,20 +114,17 @@ int main(void)
   GimbalMotorSwitchGpioInit();
   GimbalBoardCfgCom((uint32_t)hal.usart0,USART_CONSOLE_RX_BUF,COM_USART_CONSOLE_RX_BUF_LEN,USART_CONSOLE_TX_BUF,COM_USART_CONSOLE_TX_BUF_LEN,&usart_driver,&comDebugId,false);
   systemPrintfInit();
-  ADCSampleInit(&hal_ADC_Vol_ID,hal.adc1,false);
-  ADCSampleInit(&hal_ADC_pwmout_sample_id,hal.adc0,true);
-  MotorSvpwmTimInit(&Hal_Tim_pwmOut_ID,hal.pwmout0,hal_ADC_pwmout_sample_id);
-
 //  SysTimerTimInit(&Hal_Timer_ID,hal.timer0);
-//  SysTimerTimInit(&Hal_Print_Tim_ID,hal.timer1);
-//  SysTimerTimInit(&Hal_motor_Tim_ID,hal.timer2);
+//  ADCSampleInit(&hal_ADC_Vol_ID,hal.adc1,false);
+//  ADCSampleInit(&hal_ADC_pwmout_sample_id,hal.adc0,true);
+//  MotorSvpwmTimInit(&Hal_Tim_pwmOut_ID,hal.pwmout0,hal_ADC_pwmout_sample_id);
+//  CanardMainInit();
+//  CANInit(hal.can0,&hal_CAN_Gimbal_ID);
+//  Init_led_buz_state();
 
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-//  MX_DMA_Init();
-//  MX_ADC1_Init();
-//  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

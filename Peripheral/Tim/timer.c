@@ -13,7 +13,7 @@ uint32_t Hal_Print_Tim_ID,Hal_motor_Tim_ID,Hal_can_Tim_ID;
 uint64_t halSysTickCount = 0;
 
 uint32_t Hal_Timer_4,Hal_Timer_5,Hal_Timer_6,Hal_Timer_7;
-
+volatile uint32_t glo_50ms=0;
 
 void SysTimerTimInit(uint32_t *timer_tim_id,const GIMBAL_TIM_TIMER_CFG *cfg)
 {
@@ -115,16 +115,30 @@ void TIM5_IRQHandler(void)
 /**********************************************************************************/
 void TIM7_IRQHandler(void)
 {
-	GIMBAL_TIM_TIMER_DEV *timer_dev = (GIMBAL_TIM_TIMER_DEV	*)Hal_Print_Tim_ID;
+	GIMBAL_TIM_TIMER_DEV *timer_dev = (GIMBAL_TIM_TIMER_DEV	*)Hal_Timer_ID;
 	DEBUG_Assert(timer_dev);
 
 	if((timer_dev->TimerCfg->tim->Instance->DIER & TIM_IT_UPDATE) == TIM_IT_UPDATE)
 	{
 		timer_dev->TimerCfg->tim->Instance->SR &= ~TIM_IT_UPDATE;
-
+		glo_50ms++;
 	}
 }
+#if 0
+uint64_t GetMicro(void)
+{
+	uint16_t cnt;
+	cnt=TIM7->CNT;
+	return glo_50ms*50000+cnt;
+}
 
+uint32_t GetMillis(void)
+{
+	uint16_t cnt;
+	cnt=TIM7->CNT;
+	return glo_50ms*50+cnt/1000;
+}
+#else
 #define SystickUsTick   (HAL_RCC_GetHCLKFreq()/1000000)
 uint64_t GetMicro(void)
 {
@@ -138,29 +152,6 @@ uint32_t GetMillis(void)
 {
     return HAL_GetTick();
 }
+#endif
 
-void delay_us(float us) //us no more than 1000ms
-{
-    uint32_t ticks;
-    uint32_t told,tnow,tcnt=0;
-    uint32_t reload=SysTick->LOAD;
-    ticks= us*HAL_RCC_GetHCLKFreq()/1000000;        //HAL_RCC_GetHCLKFreq()/1000000 be the ticks when 1 us passed
-    told=SysTick->VAL;
-    while(1)
-    {
-        tnow=SysTick->VAL;
-        if(tnow!=told)
-        {
-            if(tnow<told)tcnt+=(told-tnow);
-            else tcnt+=(reload-tnow+told);
-            told=tnow;
-            if(tcnt>=ticks)break;
-        }
-    }
-}
-
-void delay_ms(uint16_t ms)
-{
-	HAL_Delay(ms);
-}
 
