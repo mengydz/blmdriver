@@ -277,7 +277,7 @@ void systemPrintfInit(void)
 //Task任务
 void ProtocolTask(void const * argument)
 {
-  static portTickType xLastWakeTime;
+  portTickType xLastWakeTime;
   uint32_t tick = 0;
   xLastWakeTime = xTaskGetTickCount();
   gbSendDelay = 2000;

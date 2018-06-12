@@ -14,7 +14,7 @@ uint8_t show_step_1=0;
 
 void Init_led_buz_state(void)
 {
-	Set_led_blink_type(11);
+	Set_led_blink_type(7);
 }
 
 void SetLedColor(uint8_t color)
@@ -245,7 +245,7 @@ void Set_led_blink_type(uint8_t tp)
 //Task任务
 void NotifyTask(void const * argument)
 {
-	static portTickType xLastWakeTime;
+  portTickType xLastWakeTime;
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
   while(1)
@@ -281,7 +281,7 @@ void vTaskGetRunTimeStats(char *pcWriteBuffer)
 			{
 				/* 计算任务运行时间与总运行时间的百分比。*/
 				ulStatsAsPercentage = pxTaskStatusArray[ x ].ulRunTimeCounter /ulTotalRunTime;
-				printf("%s  %u  %u  %u  %u%%\n",
+				printf("%s\t\t%u\t%u\t%u\t%u%%\n",
 						pxTaskStatusArray[ x ].pcTaskName,
 						pxTaskStatusArray[ x ].uxCurrentPriority,
 						pxTaskStatusArray[ x ].usStackHighWaterMark,

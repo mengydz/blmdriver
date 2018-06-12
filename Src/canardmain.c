@@ -1,6 +1,10 @@
 #include "canardmain.h"
 #include "can.h"
 #include "myMath.h"
+/* Includes ------------------------------------------------------------------*/
+#include "FreeRTOS.h"
+#include "task.h"
+#include "cmsis_os.h"
 
 uint8_t Flag_Statue_Tx = CAN_IDLE;
 uint8_t GetSysInfo = false;
@@ -115,6 +119,33 @@ void CanardMainInit(void)
 {
 	canardInit(&canard, canard_memory_pool, sizeof(canard_memory_pool), onTransferReceived, shouldAcceptTransfer, NULL);
 	canard.node_id = CANARD_STM32_GIMBAL_NODE_ID;
+}
+
+//CanardmainTask任务
+void CanardmainTask(void const * argument)
+{
+  portTickType xLastWakeTime;
+  uint16_t SendFreqCnt=0;
+  //延时时间单元初始值记录
+  xLastWakeTime = xTaskGetTickCount();
+  while(1)
+  {
+    vTaskDelayUntil(&xLastWakeTime,portTICK_RATE_MS);
+    if(SendFreqCnt%100 == 0)
+    {
+
+    }
+    if(SendFreqCnt%100 == 5)
+    {
+
+    }
+    if(SendFreqCnt%200 == 0)
+    {
+
+    }
+    SendFreqCnt++;
+    SendFreqCnt %= 10000;
+  }
 }
 
 
