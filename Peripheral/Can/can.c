@@ -36,7 +36,7 @@
 #include "can.h"
 #include "stdlib.h"
 #include "string.h"
-#include "timer.h"
+//#include "timer.h"
 #include "canard.h"
 #include "canardmain.h"
 
@@ -169,24 +169,8 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 {
     CanardCANFrame rx_frame;
-	const uint64_t timestamp = GetMicro();
 	if(hcan->Instance == CAN1)
 	{
-		if((hcan->pRxMsg->IDE == CAN_ID_STD ) && ((hcan->pRxMsg->StdId == GIMBAL_REBOOT_ID1 ) \
-				|| (hcan->pRxMsg->StdId == GIMBAL_REBOOT_ID2 ) || (hcan->pRxMsg->StdId == GIMBAL_REBOOT_ID3 ) \
-				|| (hcan->pRxMsg->StdId == GIMBAL_REBOOT_ID4 )) )
-		{
-			if((hcan->pRxMsg->Data[0] == 0xA2) && (hcan->pRxMsg->Data[1] == 0xB2)&& (hcan->pRxMsg->Data[2] == 0xC2)&& (hcan->pRxMsg->Data[3] == 0xD2))
-			{
-				if(hcan->pRxMsg->Data[4] == 0x01)
-				{
-					SystemReboot(true);
-				}else if(hcan->pRxMsg->Data[4] == 0x02)
-				{
-					SystemReboot(false);
-				}
-			}
-		}
 		rx_frame.id = hcan->pRxMsg->ExtId;
 		if (hcan->pRxMsg->IDE == CAN_ID_EXT)
 		{
@@ -201,24 +185,9 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 
 		rx_frame.data_len = (uint8_t) hcan->pRxMsg->DLC;
 		memcpy(rx_frame.data, hcan->pRxMsg->Data, rx_frame.data_len);
-		canardHandleRxFrame(&canard, &rx_frame, timestamp);		
+//		canardHandleRxFrame(&canard, &rx_frame, timestamp);
 	}else if(hcan->Instance == CAN2)
 	{
-		if((hcan->pRx1Msg->IDE == CAN_ID_STD ) && ((hcan->pRx1Msg->StdId == GIMBAL_REBOOT_ID1 ) \
-				|| (hcan->pRx1Msg->StdId == GIMBAL_REBOOT_ID2 ) || (hcan->pRx1Msg->StdId == GIMBAL_REBOOT_ID3 ) \
-				|| (hcan->pRx1Msg->StdId == GIMBAL_REBOOT_ID4 )) )
-		{
-			if((hcan->pRx1Msg->Data[0] == 0xA2) && (hcan->pRx1Msg->Data[1] == 0xB2)&& (hcan->pRx1Msg->Data[2] == 0xC2)&& (hcan->pRx1Msg->Data[3] == 0xD2))
-			{
-				if(hcan->pRx1Msg->Data[4] == 0x01)
-				{
-					SystemReboot(true);
-				}else if(hcan->pRx1Msg->Data[4] == 0x02)
-				{
-					SystemReboot(false);
-				}
-			}
-		}
 		rx_frame.id = hcan->pRx1Msg->ExtId;
 		if (hcan->pRx1Msg->IDE == CAN_ID_EXT)
 		{
@@ -233,7 +202,7 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 
 		rx_frame.data_len = (uint8_t) hcan->pRx1Msg->DLC;
 		memcpy(rx_frame.data, hcan->pRx1Msg->Data, rx_frame.data_len);
-		canardHandleRxFrame(&canard, &rx_frame, timestamp);		
+//		canardHandleRxFrame(&canard, &rx_frame, timestamp);
 	}	
 }
 /**

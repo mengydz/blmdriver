@@ -4,10 +4,10 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-#include "gpio.h"
 #include "string.h"
-#include "usart.h"
 #include "cpu_utils.h"
+#include "gpio.h"
+#include "board_hw_defs.h"
 /* USER CODE END Includes */
 
 /* Variables -----------------------------------------------------------------*/
@@ -19,10 +19,10 @@
 TaskHandle_t xHandleTaskStart;
 void StartTask(void const * argument);
 
-#define LED1_TASK_PRIO            31
-#define LED1_STK_SIZE             256
-TaskHandle_t xHandleTaskLED1;
-void TaskLED1(void const * argument);
+#define Proto_TASK_PRIO            31
+#define Proto_STK_SIZE             128
+TaskHandle_t xHandleTaskProto;
+void ProtocolTask(void const * argument);
 
 #define LED2_TASK_PRIO            30
 #define LED2_STK_SIZE             128
@@ -57,12 +57,12 @@ void MX_FREERTOS_Init(void) {
 void StartTask(void const * argument)
 {
   taskENTER_CRITICAL();
-  xTaskCreate((TaskFunction_t )TaskLED1,
-              (const char *  )"Task1",
-              (uint16_t       )LED1_STK_SIZE,
+  xTaskCreate((TaskFunction_t )ProtocolTask,
+              (const char *  )"ProtocolTask",
+              (uint16_t       )Proto_STK_SIZE,
               (void *         )NULL,
-              (UBaseType_t    )LED1_TASK_PRIO,
-              (TaskHandle_t * )&xHandleTaskLED1);
+              (UBaseType_t    )Proto_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskProto);
 
   xTaskCreate((TaskFunction_t )TaskLED2,
               (const char *  )"Task2",
@@ -90,102 +90,53 @@ void StartTask(void const * argument)
 }
 
 /*本例演示如是使用uxTaskGetSystemState()函数来获取运行时间信息，并将其转化为程序员更易识别的字符格式，这些转化后的字符保存到pcWriteBuffer中。*/
-void vTaskGetRunTimeStats(char *pcWriteBuffer1)
+void vTaskGetRunTimeStats(char *pcWriteBuffer)
 {
-   TaskStatus_t*pxTaskStatusArray;
-   volatile UBaseType_t uxArraySize, x;
-   unsigned long ulTotalRunTime, ulStatsAsPercentage;
-   char pcWriteBuffertt[400]={0};
-   char *pcWriteBuffer = pcWriteBuffertt;
-
-   /* 防御性代码，确保字符串有合理的结束*/
-
-
-   /* 获取任务总数目*/
-  uxArraySize = uxTaskGetNumberOfTasks ();
-
-   /*为每个任务的TaskStatus_t结构体分配内存，也可以静态的分配一个足够大的数组 */
-  pxTaskStatusArray = pvPortMalloc( uxArraySize * sizeof( TaskStatus_t ));
-
-   if(pxTaskStatusArray != NULL )
-   {
-      /*获取每个任务的状态信息 */
-     uxArraySize = uxTaskGetSystemState( pxTaskStatusArray, uxArraySize,&ulTotalRunTime );
-
-      /* 百分比计算 */
-     ulTotalRunTime /= 100UL;
-
-      /* 避免除零错误 */
-      if(ulTotalRunTime > 0 )
-      {
-         /* 将获得的每一个任务状态信息部分的转化为程序员容易识别的字符串格式*/
-        for( x = 0; x < uxArraySize; x++ )
-         {
-           /* 计算任务运行时间与总运行时间的百分比。*/
-           ulStatsAsPercentage = pxTaskStatusArray[ x ].ulRunTimeCounter /ulTotalRunTime;
-
-		   sprintf( pcWriteBuffer, "%s\t%u\t%u\t%u\t%u%%\r\n",
-							 pxTaskStatusArray[ x ].pcTaskName,
-							 pxTaskStatusArray[ x ].uxCurrentPriority,
-							 pxTaskStatusArray[ x ].usStackHighWaterMark,
-							 pxTaskStatusArray[ x ].xTaskNumber,
-							 ulStatsAsPercentage );
-		   HAL_UART_Transmit(&huart1,(uint8_t *)pcWriteBuffer,strlen( ( char* ) pcWriteBuffer ),0xFFFF);
-		   while(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_TC)!=SET);
-         }
-		   HAL_UART_Transmit(&huart1,(uint8_t *)"\r\n",sizeof("\r\n"),0xFFFF);
-		   while(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_TC)!=SET);
-      }
-
-      /* 释放之前申请的内存*/
-     vPortFree( pxTaskStatusArray );
-   }
+	TaskStatus_t*pxTaskStatusArray;
+	volatile UBaseType_t uxArraySize, x;
+	unsigned long ulTotalRunTime, ulStatsAsPercentage;
+	/* 获取任务总数目*/
+	uxArraySize = uxTaskGetNumberOfTasks ();
+	/*为每个任务的TaskStatus_t结构体分配内存，也可以静态的分配一个足够大的数组 */
+	pxTaskStatusArray = pvPortMalloc( uxArraySize * sizeof( TaskStatus_t ));
+	if(pxTaskStatusArray != NULL )
+	{
+		/*获取每个任务的状态信息 */
+		uxArraySize = uxTaskGetSystemState( pxTaskStatusArray, uxArraySize,&ulTotalRunTime );
+		/* 百分比计算 */
+		ulTotalRunTime /= 100UL;
+		/* 避免除零错误 */
+		if(ulTotalRunTime > 0 )
+		{
+			/* 将获得的每一个任务状态信息部分的转化为程序员容易识别的字符串格式*/
+			for( x = 0; x < uxArraySize; x++ )
+			{
+				/* 计算任务运行时间与总运行时间的百分比。*/
+				ulStatsAsPercentage = pxTaskStatusArray[ x ].ulRunTimeCounter /ulTotalRunTime;
+				printf("%s  %u  %u  %u  %u%%\n",
+						pxTaskStatusArray[ x ].pcTaskName,
+						pxTaskStatusArray[ x ].uxCurrentPriority,
+						pxTaskStatusArray[ x ].usStackHighWaterMark,
+						pxTaskStatusArray[ x ].xTaskNumber,
+						ulStatsAsPercentage );
+			}
+		}
+		/* 释放之前申请的内存*/
+		vPortFree( pxTaskStatusArray );
+	}
 }
-//LED1任务
-void TaskLED1(void const * argument)
-{
-  portTickType xLastWakeTime;
-  UBaseType_t uxHighWaterMark;
-  static uint16_t usage = 0;
-  volatile UBaseType_t uxArraySize, x;
-  uint32_t num  = 0;
-  char buffer[100];
-  //延时时间单元初始值记录
-  xLastWakeTime = xTaskGetTickCount();
-  uxHighWaterMark =uxTaskGetStackHighWaterMark( xHandleTaskLED1 );
-  uxArraySize = uxTaskGetNumberOfTasks ();
-  while(1)
-  {
-    //获取CPU使用率并串口打印
-    usage = osGetCPUUsage();
-    uxHighWaterMark =uxTaskGetStackHighWaterMark( xHandleTaskLED1 );
-    uxArraySize = uxTaskGetNumberOfTasks ();
-    num = sprintf(buffer,"cpu:%d%%,Water:%d,Num:%d\r\n",usage,uxHighWaterMark,uxArraySize);
-
-    HAL_UART_Transmit(&huart1,(uint8_t *)buffer,num,0xFFFF);
-    while(__HAL_UART_GET_FLAG(&huart1,UART_FLAG_TC)!=SET);
-    vTaskGetRunTimeStats(NULL);
-    vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));
-  }
-}
-
 //LED2任务
 void TaskLED2(void const * argument)
 {
   portTickType xLastWakeTime;
-
-  static  uint16_t usage = 0;
-  uint32_t num  = 0;
-  char buffer[100];
-
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
   while(1)
   {
     //LED闪烁
-	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_0);
-	HAL_Delay(50);
-    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+	LedToggle(LED_RED);
+	HAL_Delay(1);
+    vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));
   }
 }
 
@@ -194,18 +145,14 @@ void TaskLED3(void const * argument)
 {
   portTickType xLastWakeTime;
 
-  static  uint16_t usage = 0;
-  uint32_t num  = 0;
-  char buffer[100];
-
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
   while(1)
   {
     //LED闪烁
-	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_1);
-	HAL_Delay(100);
-    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+	printf("cpu:%d%%\n",osGetCPUUsage());
+	LedToggle(LED_GREEN);
+    vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));
   }
 }
 
@@ -214,18 +161,13 @@ void TaskLED4(void const * argument)
 {
   portTickType xLastWakeTime;
 
-  static  uint16_t usage = 0;
-  uint32_t num  = 0;
-  char buffer[100];
-
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
   while(1)
   {
     //LED闪烁
-	HAL_GPIO_TogglePin(GPIOC,GPIO_PIN_2);
-	HAL_Delay(150);
-    vTaskDelayUntil(&xLastWakeTime,(500/portTICK_RATE_MS));
+	LedToggle(LED_BLUE);
+    vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));
   }
 }
 /* USER CODE END Application */

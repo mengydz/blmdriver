@@ -324,7 +324,7 @@ TIM_HandleTypeDef	PwmOutTim[] = {
 	[MotorOutPutChannel1] = {
 		.Instance = TIM8,
 		.Init = {
-			.Prescaler = 3-1,
+			.Prescaler = 83,
 			.Period = 2000,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_CENTERALIGNED2,//center-aligned mode selection
@@ -343,36 +343,27 @@ TIM_HandleTypeDef	PwmOutTim[] = {
 
 TIM_HandleTypeDef	TimerTim[] = {
 	[TimerChannel1] = {
-		.Instance = TIM6,
+		.Instance = TIM7,
 		.Init = {
-			.Prescaler = 90-1,
-			.Period = 0xFFFF,
+			.Prescaler = 84-1,
+			.Period = 1000,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_UP,//center-aligned mode selection
 		},
 	},
 	[TimerChannel2] = {
-		.Instance = TIM7,
+		.Instance = TIM4,
 		.Init = {
-			.Prescaler = 90-1,
+			.Prescaler = 84-1,
 			.Period = 1000,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_UP,//center-aligned mode selection
 		},
 	},
 	[TimerChannel3] = {
-		.Instance = TIM4,
-		.Init = {
-			.Prescaler = 90-1,
-			.Period = 1000,
-			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
-			.CounterMode = TIM_COUNTERMODE_UP,//center-aligned mode selection
-		},
-	},
-	[TimerChannel4] = {
 		.Instance = TIM5,
 		.Init = {
-			.Prescaler = 90-1,
+			.Prescaler = 84-1,
 			.Period = 1000,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_UP,//center-aligned mode selection
@@ -466,7 +457,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 			},
 			.sMC = {
 				.MasterOutputTrigger = TIM_TRGO_OC1REF,
-				.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE,
+				.MasterSlaveMode = TIM_MASTERSLAVEMODE_ENABLE,
 			},
 			.oc	= {
 				.OCMode = TIM_OCMODE_PWM1,
@@ -475,7 +466,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 				.OCNPolarity	= TIM_OCNPOLARITY_HIGH,
 				.OCNIdleState	= TIM_OCNIDLESTATE_RESET,
 				.OCIdleState	= TIM_OCIDLESTATE_RESET,
-				.Pulse 			= 0,
+				.Pulse 			= 1000,
 			},
 			.CCTimChannel = TIM_CHANNEL_1,
 			.TimChannel[MotorPhase1] = TIM_CHANNEL_2,
@@ -535,7 +526,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 			.OCNPolarity	= TIM_OCNPOLARITY_HIGH,
 			.OCNIdleState	= TIM_OCNIDLESTATE_RESET,
 			.OCIdleState	= TIM_OCIDLESTATE_RESET,
-			.Pulse 			= 0,
+			.Pulse 			= 1000,
 		},
 		.CCTimChannel = TIM_CHANNEL_1,
 		.TimChannel[MotorPhase1] = TIM_CHANNEL_1,
@@ -578,10 +569,10 @@ const GIMBAL_TIM_TIMER_CFG gimbalTimerCfg[] = {
 		[TimerChannel1] = {
 			.tim = &TimerTim[TimerChannel1],
 			.tim_irq = {
-				.irq_enabled = false,
+				.irq_enabled = true,
 				.irq_cfg = {
-					.irq = TIM6_DAC_IRQn,
-					.nvic_preemptPriority = IRQ_PRIO_MID,
+					.irq = TIM7_IRQn,
+					.nvic_preemptPriority = IRQ_PRIO_LOW,
 					.nvic_subPriority = 0,
 				},
 				.irqFlagNum = 1,
@@ -593,19 +584,6 @@ const GIMBAL_TIM_TIMER_CFG gimbalTimerCfg[] = {
 			.tim_irq = {
 				.irq_enabled = true,
 				.irq_cfg = {
-					.irq = TIM7_IRQn,
-					.nvic_preemptPriority = IRQ_PRIO_LOW,
-					.nvic_subPriority = 0,
-				},
-				.irqFlagNum = 1,
-				.irqFlag[0] = TIM_IT_UPDATE,
-			},
-		},
-		[TimerChannel3] = {
-			.tim = &TimerTim[TimerChannel3],
-			.tim_irq = {
-				.irq_enabled = true,
-				.irq_cfg = {
 					.irq = TIM4_IRQn,
 					.nvic_preemptPriority = IRQ_PRIO_MID,
 					.nvic_subPriority = 0,
@@ -614,8 +592,8 @@ const GIMBAL_TIM_TIMER_CFG gimbalTimerCfg[] = {
 				.irqFlag[0] = TIM_IT_UPDATE,
 			},
 		},
-		[TimerChannel4] = {
-			.tim = &TimerTim[TimerChannel4],
+		[TimerChannel3] = {
+			.tim = &TimerTim[TimerChannel3],
 			.tim_irq = {
 				.irq_enabled = true,
 				.irq_cfg = {
@@ -657,15 +635,15 @@ GIMBAL_TIM_PWMOUT_CFG const *GetPwmOutCfg(uint8_t i)
 ADC_HandleTypeDef		PwmoutChan0CurrentSampleADCHandle = {
 	.Instance = ADC1,
 	.Init = {
-		.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2,
+		.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
 		.Resolution = ADC_RESOLUTION_12B,
 		.ScanConvMode = ENABLE,
 		.ContinuousConvMode = DISABLE,
 		.DiscontinuousConvMode = DISABLE,
 		.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING,
-		.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T8_CC1,
+		.ExternalTrigConv = ADC_EXTERNALTRIGCONV_T8_TRGO,
 		.DataAlign = ADC_DATAALIGN_RIGHT,
-		.NbrOfConversion = 3,
+		.NbrOfConversion = 2,
 		.DMAContinuousRequests = ENABLE,
 		.EOCSelection = ADC_EOC_SINGLE_CONV,
 	},
@@ -703,7 +681,7 @@ ADC_HandleTypeDef		VoltageSampleADCHandle = {
 const GIMBAL_ADC_CFG gimbalPwmout0CurSmpADCCfg = {
 	.hadc = &PwmoutChan0CurrentSampleADCHandle,
 	.irq_enabled = false,
-	.channelNum = 3,
+	.channelNum = 2,
 	.hdma = &_adc1Dma,
 	.dmairq = {
 		.irq_enabled = true,
@@ -716,42 +694,28 @@ const GIMBAL_ADC_CFG gimbalPwmout0CurSmpADCCfg = {
         .irqFlag[0] = DMA_IT_TC,
 	},
 	.sConfig[0] = {
-		.Channel      = ADC_CHANNEL_1,
+		.Channel      = ADC_CHANNEL_3,
 		.Rank         = 1,
 		.SamplingTime = ADC_SAMPLETIME_3CYCLES,
 	},
 	.ADCGpio[0] = {
 		.gpio = GPIOA,
 		.initTypeDef = {
-			.Pin = GPIO_PIN_1,
+			.Pin = GPIO_PIN_3,
 			.Mode = GPIO_MODE_ANALOG,
 			.Pull = GPIO_NOPULL,
 			.Speed = GPIO_SPEED_FREQ_MEDIUM,
 		},
 	},
 	.sConfig[1] = {
-		.Channel      = ADC_CHANNEL_2,
+		.Channel      = ADC_CHANNEL_4,
 		.Rank         = 2,
 		.SamplingTime = ADC_SAMPLETIME_3CYCLES,
 	},
 	.ADCGpio[1] = {
 		.gpio = GPIOA,
 		.initTypeDef = {
-			.Pin = GPIO_PIN_2,
-			.Mode = GPIO_MODE_ANALOG,
-			.Pull = GPIO_NOPULL,
-			.Speed = GPIO_SPEED_FREQ_MEDIUM,
-		},
-	},
-	.sConfig[2] = {
-		.Channel      = ADC_CHANNEL_3,
-		.Rank         = 3,
-		.SamplingTime = ADC_SAMPLETIME_3CYCLES,
-	},
-	.ADCGpio[2] = {
-		.gpio = GPIOA,
-		.initTypeDef = {
-			.Pin = GPIO_PIN_3,
+			.Pin = GPIO_PIN_4,
 			.Mode = GPIO_MODE_ANALOG,
 			.Pull = GPIO_NOPULL,
 			.Speed = GPIO_SPEED_FREQ_MEDIUM,
@@ -780,9 +744,9 @@ const GIMBAL_ADC_CFG gimbalVoltageSmpADCCfg = {
 		.SamplingTime = ADC_SAMPLETIME_3CYCLES,
 	},
 	.ADCGpio[0] = {
-		.gpio = GPIOA,
+		.gpio = GPIOC,
 		.initTypeDef = {
-			.Pin = GPIO_PIN_0,
+			.Pin = GPIO_PIN_4,
 			.Mode = GPIO_MODE_ANALOG,
 			.Pull = GPIO_NOPULL,
 			.Speed = GPIO_SPEED_FREQ_MEDIUM,
@@ -831,7 +795,7 @@ CAN_HandleTypeDef hcan2 = {
 const GIMBAL_CAN_CFG GimbalCanCfg[2] = {
 	[0] = {
 		.hcan = &hcan1,
-		.sFilterCount = 10,
+		.sFilterCount = 1,
 		.sFilterConfig = {
 			[0] = {
 				.FilterNumber = 0,
@@ -843,115 +807,7 @@ const GIMBAL_CAN_CFG GimbalCanCfg[2] = {
 				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
 				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
 				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[1] = {
-				.FilterNumber = 1,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[2] = {
-				.FilterNumber = 2,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[3] = {
-				.FilterNumber = 3,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[4] = {
-				.FilterNumber = 4,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[5] = {
-				.FilterNumber = 5,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[6] = {
-				.FilterNumber = 6,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[7] = {
-				.FilterNumber = 7,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[8] = {
-				.FilterNumber = 8,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[9] = {
-				.FilterNumber = 9,
-				.FilterMode = CAN_FILTERMODE_IDLIST,
-				.FilterScale = CAN_FILTERSCALE_16BIT,
-				.FilterIdHigh = (uint16_t)GIMBAL_REBOOT_ID1<<5,
-				.FilterIdLow = (uint16_t)GIMBAL_REBOOT_ID2<<5,			//0x28 is can nod ids
-				.FilterMaskIdHigh = (uint16_t)GIMBAL_REBOOT_ID3<<5,
-				.FilterMaskIdLow = (uint16_t)GIMBAL_REBOOT_ID4<<5,
-				.FilterFIFOAssignment = CAN_FIFO0,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
+				.BankNumber = 14,
 			},
 		},
 		.canTxIRQ = {
@@ -977,7 +833,7 @@ const GIMBAL_CAN_CFG GimbalCanCfg[2] = {
 	},
 	[1] = {
 		.hcan = &hcan2,
-		.sFilterCount = 10,
+		.sFilterCount = 1,
 		.sFilterConfig = {
 			[0] = {
 				.FilterNumber = 14,
@@ -989,115 +845,7 @@ const GIMBAL_CAN_CFG GimbalCanCfg[2] = {
 				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
 				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
 				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[1] = {
-				.FilterNumber = 15,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[2] = {
-				.FilterNumber = 16,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[3] = {
-				.FilterNumber = 17,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[4] = {
-				.FilterNumber = 18,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[5] = {
-				.FilterNumber = 19,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[6] = {
-				.FilterNumber = 20,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[7] = {
-				.FilterNumber = 21,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[8] = {
-				.FilterNumber = 22,
-				.FilterMode = CAN_FILTERMODE_IDMASK,
-				.FilterScale = CAN_FILTERSCALE_32BIT,
-				.FilterIdHigh = (((((uint32_t)UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)>>16) & 0xFFFF,
-				.FilterIdLow = (uint16_t)(((UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID<<8) & 0xFFFF00)<<3)|CAN_ID_EXT,			//0x28 is can nod ids
-				.FilterMaskIdHigh = ((0XFFFF00<<3)>>16) & 0xFFFF,
-				.FilterMaskIdLow = (uint16_t)(0XFFFF00<<3)|CAN_ID_EXT,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
-			},
-			[9] = {
-				.FilterNumber = 23,
-				.FilterMode = CAN_FILTERMODE_IDLIST,
-				.FilterScale = CAN_FILTERSCALE_16BIT,
-				.FilterIdHigh = (uint16_t)GIMBAL_REBOOT_ID1<<5,
-				.FilterIdLow = (uint16_t)GIMBAL_REBOOT_ID2<<5,			//0x28 is can nod ids
-				.FilterMaskIdHigh = (uint16_t)GIMBAL_REBOOT_ID3<<5,
-				.FilterMaskIdLow = (uint16_t)GIMBAL_REBOOT_ID4<<5,
-				.FilterFIFOAssignment = CAN_FILTER_FIFO1,
-				.FilterActivation = ENABLE,
-//				.BankNumber = 14,
+				.BankNumber = 14,
 			},
 		},
 		.canTxIRQ = {
@@ -1129,7 +877,6 @@ const HAL hal = {
     .timer0	 = &gimbalTimerCfg[0],
     .timer1	 = &gimbalTimerCfg[1],
     .timer2	 = &gimbalTimerCfg[2],
-    .timer3	 = &gimbalTimerCfg[3],
     .pwmout0 = &gimbalPWMOutCfg[0],
     .pwmout1 = &gimbalPWMOutCfg[1],
     .pwmin0  = &gimbalPwmInputCfg[0],

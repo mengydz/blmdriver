@@ -1,6 +1,4 @@
 #include "canardmain.h"
-#include "svpwm.h"
-#include "motordriver.h"
 #include "can.h"
 #include "myMath.h"
 
@@ -156,128 +154,7 @@ static void onTransferReceived(CanardInstance* ins,
 				{//head 0-6
 				}else if(transfer->payload_len <= 12)
 				{//head 0-5 tail 0-5
-					DataConvert _motorpower;
-					SvpwmDrive	*svpwmDrive = (SvpwmDrive*)svpwmID;
-					_motorpower.bytes[0] = transfer->payload_head[0];
-					_motorpower.bytes[1] = transfer->payload_head[1];
-					_motorpower.bytes[2] = transfer->payload_head[2];
-					_motorpower.bytes[3] = transfer->payload_head[3];
-					Constrain(_motorpower.fdata,MINMOTORPOWER,MAXMOTORPOWER);
-					svpwmDrive->out = _motorpower.fdata;
-					svpwmDrive->isClosedLoop = true;
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					DataConvert _motorpower;
-					SvpwmDrive	*svpwmDrive = (SvpwmDrive*)svpwmID;
-					_motorpower.bytes[0] = transfer->payload_head[0];
-					_motorpower.bytes[1] = transfer->payload_head[1];
-					_motorpower.bytes[2] = transfer->payload_head[2];
-					_motorpower.bytes[3] = transfer->payload_head[3];
-					Constrain(_motorpower.fdata,MINMOTORPOWER,MAXMOTORPOWER);
-					svpwmDrive->out = _motorpower.fdata;
-					svpwmDrive->isClosedLoop = false;
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					switch(transfer->payload_head[0])
-					{
-						case 1:
-							GetSysInfo = true;
-							break;
-						case 2:
-							GetPitchEncoder = true;
-							break;
-						case 3:
-							
-							break;
-						default:break;
-					}
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
-				}else
-				{//head 0-5 middle ...
-					
-				}
-			}break;
-			case UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID:
-			{
-				if(transfer->payload_len <= 7)
-				{//head 0-6
-					if(transfer->payload_head[0])
-						MotorSwitchOn();
-					else
-						MotorSwitchOff();
-				}else if(transfer->payload_len <= 12)
-				{//head 0-5 tail 0-5
-					
+
 				}else
 				{//head 0-5 middle ...
 					
@@ -312,46 +189,6 @@ static bool shouldAcceptTransfer(const CanardInstance* ins,
 			case UAVCAN_GIMBAL_SET_SPEED_DATA_TYPE_ID:
 			{
 				*out_data_type_signature = UAVCAN_GIMBAL_SET_SPEED_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_SET_VECTOR_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_SET_VECTOR_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_SET_CURRENT_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_SET_CURRENT_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_CMD_CONTROL_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_CMD_CONTROL_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_PIT_RESPONSE_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_CMD_CONTROL_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_ROL_RESPONSE_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_CMD_CONTROL_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_YAW_RESPONSE_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_CMD_CONTROL_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_SET_MOTORSWITCH_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_SET_MOTORSWITCH_TYPE_SIGNATURE;
-				return true;
-			}
-			case UAVCAN_GIMBAL_INFO_RESPONSE_DATA_TYPE_ID:
-			{
-				*out_data_type_signature = UAVCAN_GIMBAL_INFO_RESPONSE_TYPE_SIGNATURE;
 				return true;
 			}
 			default:break;

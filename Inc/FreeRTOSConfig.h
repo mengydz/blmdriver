@@ -113,12 +113,13 @@
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION  1
 #define configUSE_TASK_NOTIFICATIONS             0
 
-extern uint64_t micros();
-extern uint32_t millis();
+extern uint64_t GetMicro(void);
+extern uint32_t GetMillis(void);
+
 
 #define configGENERATE_RUN_TIME_STATS     		 	1
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS()	__asm volatile(" nop\n")
-#define portGET_RUN_TIME_COUNTER_VALUE()			micros()
+#define portGET_RUN_TIME_COUNTER_VALUE()			GetMicro()
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES                    0
@@ -180,7 +181,8 @@ standard names. */
 
 /* USER CODE BEGIN Defines */   	      
 /* Section where parameter definitions can be added (for instance, to override default ones in FreeRTOS.h) */
-/* USER CODE END Defines */ #define traceTASK_SWITCHED_IN()  extern void StartIdleMonitor(void); \
+/* USER CODE END Defines */
+#define traceTASK_SWITCHED_IN()  extern void StartIdleMonitor(void); \
                                  StartIdleMonitor()
 #define traceTASK_SWITCHED_OUT() extern void EndIdleMonitor(void); \
                                 EndIdleMonitor()

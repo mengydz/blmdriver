@@ -5,9 +5,10 @@
  *      Author: baron
  */
 #include "gpio.h"
+#include "myMath.h"
 
 static const DriverLed driverLeds[] = {
-        [LED_RED] = {
+        [LED_BLUE] = {
             .pin = {
                 .gpio = GPIOC,
                 .initTypeDef = {
@@ -19,7 +20,7 @@ static const DriverLed driverLeds[] = {
             },
             .active_high = false,
         },
-        [LED_BLUE] = {
+        [LED_GREEN] = {
             .pin = {
                 .gpio = GPIOC,
                 .initTypeDef = {
@@ -31,7 +32,7 @@ static const DriverLed driverLeds[] = {
             },
             .active_high = false,
         },
-        [LED_GREEN] = {
+        [LED_RED] = {
             .pin = {
                 .gpio = GPIOC,
                 .initTypeDef = {

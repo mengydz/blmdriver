@@ -896,13 +896,11 @@ bool PIOS_COM_Available(uint32_t com_id)
     return (com_dev->driver->available)(com_dev->lower_id);
 }
 
-#include "gbProtocol.h"
+#include "protocol.h"
 int _write(int fd, char *ptr, int len)
 {
-//	fifoBuf_putByte(&gbConsoleBuffer, ch);
 	fifoBuf_putData(&gbConsoleBuffer,(uint8_t *)ptr, len);
-
-//	PIOS_COM_SendBuffer(comDebugId, (uint8_t *)ptr, len);
+//	PIOS_COM_SendBufferNonBlocking(comDebugId, (uint8_t *)ptr, len);
 	return len;
 }
 

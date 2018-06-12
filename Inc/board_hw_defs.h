@@ -13,9 +13,9 @@
 void hal_rcc_clk_enable(uint32_t instance);
 
 enum{
-	LED_GREEN=0,
+	LED_BLUE=0,
     LED_RED,
-    LED_BLUE,
+    LED_GREEN,
     LED_YELLOW,
     LED_PINK,
     LED_CYAN,
@@ -38,7 +38,6 @@ enum{
     TimerChannel1 = 0,
     TimerChannel2,
     TimerChannel3,
-    TimerChannel4,
     Timer_Num,
 };
 
@@ -242,7 +241,6 @@ typedef struct{
     GIMBAL_TIM_TIMER_CFG	const *timer0;
     GIMBAL_TIM_TIMER_CFG	const *timer1;
     GIMBAL_TIM_TIMER_CFG	const *timer2;
-    GIMBAL_TIM_TIMER_CFG	const *timer3;
     GIMBAL_TIM_PWMOUT_CFG 	const *pwmout0;
     GIMBAL_TIM_PWMOUT_CFG 	const *pwmout1;
     GIMBAL_TIM_PWMOUT_CFG 	const *pwmout2;
