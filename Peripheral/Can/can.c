@@ -135,9 +135,12 @@ void CAN1_RX0_IRQHandler(void)
 	}
 
 	rx_frame.data_len = (uint8_t) hcan->pRxMsg->DLC;
-	memcpy(rx_frame.data, hcan->pRxMsg->Data, rx_frame.data_len);
-	CanfifoBuf_putByte(&CanRxBuffer,rx_frame);
-//	canardHandleRxFrame(&canard, &rx_frame, 1);
+	if(rx_frame.data_len <= 8 && rx_frame.data_len > 0)
+	{
+		memcpy(rx_frame.data, hcan->pRxMsg->Data, rx_frame.data_len);
+		CanfifoBuf_putByte(&CanRxBuffer,rx_frame);
+//		canardHandleRxFrame(&canard, &rx_frame, 1);
+	}
 }
 
 void CAN2_TX_IRQHandler(void)
