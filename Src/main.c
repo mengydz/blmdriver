@@ -122,7 +122,6 @@ int main(void)
   CanardMainInit();
   CANInit(hal.can0,&hal_CAN_Gimbal_ID);
   Init_led_buz_state();
-
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */

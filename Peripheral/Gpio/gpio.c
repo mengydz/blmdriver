@@ -120,7 +120,7 @@ void GimbalMotorSwitchGpioInit(void)
 {
 	HAL_RCC_CLK_ENABLE((GPIO_TypeDef *)GimbalMotorSwitch.pin.gpio);
 	HAL_GPIO_Init((GPIO_TypeDef *)GimbalMotorSwitch.pin.gpio,(GPIO_InitTypeDef *)&(GimbalMotorSwitch.pin.initTypeDef));
-	MotorSwitchOn();
+	MotorSwitchOff();
 }
 
 DriverLedCfg const*GetBoardLedGpioCfg(void)
