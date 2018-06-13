@@ -1,5 +1,5 @@
-#ifndef __LED_H_
-#define __LED_H_
+#ifndef __NOTIFY_H_
+#define __NOTIFY_H_
 #include "stdbool.h"
 #include "board_hw_defs.h"
 

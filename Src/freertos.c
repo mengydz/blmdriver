@@ -32,7 +32,7 @@ TaskHandle_t xHandleTaskNotify;
 void NotifyTask(void const * argument);
 
 #define Canard_TASK_PRIO           	29
-#define Canard_STK_SIZE            	128
+#define Canard_STK_SIZE            	256
 TaskHandle_t xHandleTaskCanad;
 void CanardmainTask(void const * argument);
 
@@ -40,6 +40,11 @@ void CanardmainTask(void const * argument);
 #define Status_STK_SIZE            	256
 TaskHandle_t xHandleTaskStatus;
 void StatusTask(void const * argument);
+
+#define MotoTest_TASK_PRIO           	27
+#define MotoTest_STK_SIZE            	128
+TaskHandle_t xHandleTaskMotoTest;
+void MotoTestTask(void const * argument);
 
 void MX_FREERTOS_Init(void) {
 
@@ -86,6 +91,13 @@ void StartTask(void const * argument)
               (void *         )NULL,
               (UBaseType_t    )Status_TASK_PRIO,
               (TaskHandle_t * )&xHandleTaskStatus);
+
+  xTaskCreate((TaskFunction_t )MotoTestTask,
+              (const char *  )"MotoTest",
+              (uint16_t       )MotoTest_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )MotoTest_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskMotoTest);
 
   vTaskDelete(xHandleTaskStart);
   taskEXIT_CRITICAL();

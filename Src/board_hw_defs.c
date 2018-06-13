@@ -687,7 +687,7 @@ const GIMBAL_ADC_CFG gimbalPwmout0CurSmpADCCfg = {
 		.irq_enabled = true,
 		.irq_cfg = {
 			.irq = DMA2_Stream0_IRQn,
-			.nvic_preemptPriority = IRQ_PRIO_HIGH,
+			.nvic_preemptPriority = IRQ_PRIO_MID,
 			.nvic_subPriority = 0,
     	},
         .irqFlagNum = 1,
@@ -732,7 +732,7 @@ const GIMBAL_ADC_CFG gimbalVoltageSmpADCCfg = {
 		.irq_enabled = false,
 		.irq_cfg = {
 			.irq = DMA2_Stream1_IRQn,
-			.nvic_preemptPriority = IRQ_PRIO_HIGH,
+			.nvic_preemptPriority = IRQ_PRIO_MID,
 			.nvic_subPriority = 0,
     	},
         .irqFlagNum = 1,
@@ -812,7 +812,7 @@ const GIMBAL_CAN_CFG GimbalCanCfg[2] = {
 		},
 		.canTxIRQ = {
 			.irq = CAN1_TX_IRQn,
-			.nvic_preemptPriority = IRQ_PRIO_MID,
+			.nvic_preemptPriority = IRQ_PRIO_HIGH,
 			.nvic_subPriority = 0,
 		},
 		.canRxIRQ = {
