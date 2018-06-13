@@ -10,6 +10,9 @@ uint8_t Flag_Statue_Tx = CAN_IDLE;
 uint8_t GetSysInfo = false;
 uint8_t GetPitchEncoder = false;
 ModulesStatusInfo SysStatusInfo;
+CanardCANFrame CanRxQueueBuffer[CanRxQueueBufferSize];
+t_fifo_buffercan CanRxBuffer;
+
 /********************************************************************/
 /*
  * Application constants
@@ -121,19 +124,31 @@ void CanardMainInit(void)
 	canard.node_id = CANARD_STM32_GIMBAL_NODE_ID;
 }
 
+void CanardRevBufferInit(void)
+{
+	CanfifoBuf_init(&CanRxBuffer,CanRxQueueBuffer,CanRxQueueBufferSize);
+}
 //CanardmainTask任务
 void CanardmainTask(void const * argument)
 {
   portTickType xLastWakeTime;
   uint16_t SendFreqCnt=0;
+
+  CanardCANFrame*pPeekCanRx;
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
   while(1)
   {
     vTaskDelayUntil(&xLastWakeTime,portTICK_RATE_MS);
-    if(SendFreqCnt%100 == 0)
+    /*******************receive********************************/
+	while(CanfifoBuf_getUsed(&CanRxBuffer))
+	{
+		canardHandleRxFrame(&canard, CanfifoBuf_getByte(&CanRxBuffer), SendFreqCnt);
+	}
+	/**********send***************************************************/
+    if(SendFreqCnt%10 == 0)
     {
-
+    	SetGimbalAngle();
     }
     if(SendFreqCnt%100 == 5)
     {

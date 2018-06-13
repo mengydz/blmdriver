@@ -100,7 +100,7 @@ void StatusTask(void const * argument)
   xLastWakeTime = xTaskGetTickCount();
   while(1)
   {
-//	vTaskGetRunTimeStats(NULL);
+	vTaskGetRunTimeStats(NULL);
 //	xTaskNotifyGive( xHandleTaskStatus );
 //	ulTaskNotifyTake( pdTRUE, portMAX_DELAY);
     vTaskDelayUntil(&xLastWakeTime,(1000/portTICK_RATE_MS));

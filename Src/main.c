@@ -118,6 +118,7 @@ int main(void)
   ADCSampleInit(&hal_ADC_Vol_ID,hal.adc1,false);
   ADCSampleInit(&hal_ADC_pwmout_sample_id,hal.adc0,true);
   MotorSvpwmTimInit(&Hal_Tim_pwmOut_ID,hal.pwmout0,hal_ADC_pwmout_sample_id);
+  CanardRevBufferInit();
   CanardMainInit();
   CANInit(hal.can0,&hal_CAN_Gimbal_ID);
   Init_led_buz_state();

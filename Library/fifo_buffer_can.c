@@ -32,7 +32,8 @@
 // *****************************************************************************
 // circular buffer functions
 
-uint16_t CanfifoBuf_getSize(t_fifo_buffercan *buf) { // return the usable size of the buffer
+uint16_t CanfifoBuf_getSize(t_fifo_buffercan *buf)
+{ // return the usable size of the buffer
 
 	uint16_t buf_size = buf->buf_size;
 
@@ -42,7 +43,8 @@ uint16_t CanfifoBuf_getSize(t_fifo_buffercan *buf) { // return the usable size o
 		return 0;
 }
 
-uint16_t CanfifoBuf_getUsed(t_fifo_buffercan *buf) { // return the number of bytes available in the rx buffer
+uint16_t CanfifoBuf_getUsed(t_fifo_buffercan *buf)
+{ // return the number of bytes available in the rx buffer
 
 	uint16_t rd = buf->rd;
 	uint16_t wr = buf->wr;
@@ -89,32 +91,35 @@ void CanfifoBuf_removeData(t_fifo_buffercan *buf, uint16_t len) { // remove a nu
 	buf->rd = rd;
 }
 
-//int16_t CanfifoBuf_getBytePeek(t_fifo_buffercan *buf) {// get a data byte from the buffer without removing it
-//
-//	uint16_t rd = buf->rd;
-//
-//	// get number of bytes available
-//	uint16_t num_bytes = CanfifoBuf_getUsed(buf);
-//
-//	if (num_bytes < 1)
-//		return -1;                      // no byte retuened
-//
-//	return buf->buf_ptr[rd];            // return the byte
-//}
-
-int16_t CanfifoBuf_getByte(t_fifo_buffercan *buf) { // get a data byte from the buffer
+CanardCANFrame* CanfifoBuf_getBytePeek(t_fifo_buffercan *buf)
+{// get a data byte from the buffer without removing it
 
 	uint16_t rd = buf->rd;
-	uint16_t buf_size = buf->buf_size;
-	uint8_t *buff = buf->buf_ptr;
 
 	// get number of bytes available
 	uint16_t num_bytes = CanfifoBuf_getUsed(buf);
 
 	if (num_bytes < 1)
-		return -1;                      // no byte returned
+		return NULL;                      // no byte retuened
 
-	uint8_t b = buff[rd];
+	return &buf->buf_ptr[rd];            // return the byte
+}
+
+CanardCANFrame* CanfifoBuf_getByte(t_fifo_buffercan *buf)
+{ // get a data byte from the buffer
+
+	uint16_t rd = buf->rd;
+	uint16_t buf_size = buf->buf_size;
+	CanardCANFrame* buff = buf->buf_ptr;
+
+	// get number of bytes available
+	uint16_t num_bytes = CanfifoBuf_getUsed(buf);
+
+	if (num_bytes < 1)
+		return NULL;                      // no byte returned
+
+	CanardCANFrame* b = &buff[rd];
+
 	if (++rd >= buf_size)
 		rd = 0;
 
@@ -123,79 +128,12 @@ int16_t CanfifoBuf_getByte(t_fifo_buffercan *buf) { // get a data byte from the 
 	return b;                           // return the byte
 }
 
-uint16_t CanfifoBuf_getDataPeek(t_fifo_buffercan *buf, void *data, uint16_t len) { // get data from the buffer without removing it
-
-	uint16_t rd = buf->rd;
-	uint16_t buf_size = buf->buf_size;
-	uint8_t *buff = buf->buf_ptr;
-
-	// get number of bytes available
-	uint16_t num_bytes = CanfifoBuf_getUsed(buf);
-
-	if (num_bytes > len)
-		num_bytes = len;
-
-	if (num_bytes < 1)
-		return 0;		// return number of bytes copied
-
-	uint8_t *p = (uint8_t *) data;
-	uint16_t i = 0;
-
-	while (num_bytes > 0) {
-		uint16_t j = buf_size - rd;
-		if (j > num_bytes)
-			j = num_bytes;
-		memcpy(p + i, buff + rd, j);
-		i += j;
-		num_bytes -= j;
-		rd += j;
-		if (rd >= buf_size)
-			rd = 0;
-	}
-
-	return i;                   // return number of bytes copied
-}
-
-uint16_t CanfifoBuf_getData(t_fifo_buffercan *buf, void *data, uint16_t len) { // get data from our rx buffer
-
-	uint16_t rd = buf->rd;
-	uint16_t buf_size = buf->buf_size;
-	uint8_t *buff = buf->buf_ptr;
-
-	// get number of bytes available
-	uint16_t num_bytes = CanfifoBuf_getUsed(buf);
-
-	if (num_bytes > len)
-		num_bytes = len;
-
-	if (num_bytes < 1)
-		return 0;               // return number of bytes copied
-
-	uint8_t *p = (uint8_t *) data;
-	uint16_t i = 0;
-
-	while (num_bytes > 0) {
-		uint16_t j = buf_size - rd;
-		if (j > num_bytes)
-			j = num_bytes;
-		memcpy(p + i, buff + rd, j);
-		i += j;
-		num_bytes -= j;
-		rd += j;
-		if (rd >= buf_size)
-			rd = 0;
-	}
-
-	buf->rd = rd;
-
-	return i;                   // return number of bytes copied
-}
-
-uint16_t CanfifoBuf_putByte(t_fifo_buffercan *buf, const canbufferType b) { // add a data byte to the buffer
+uint16_t CanfifoBuf_putByte(t_fifo_buffercan *buf, const CanardCANFrame b)
+{ // add a data byte to the buffer
 
 	uint16_t wr = buf->wr;
 	uint16_t buf_size = buf->buf_size;
-	canbufferType *buff = buf->buf_ptr;
+	CanardCANFrame *buff = buf->buf_ptr;
 
 	uint16_t num_bytes = CanfifoBuf_getFree(buf);
 	if (num_bytes < 1)
@@ -210,42 +148,9 @@ uint16_t CanfifoBuf_putByte(t_fifo_buffercan *buf, const canbufferType b) { // a
 	return 1;                   // return number of bytes copied
 }
 
-uint16_t CanfifoBuf_putData(t_fifo_buffercan *buf, const void *data, uint16_t len) { // add data to the buffer
-
-	uint16_t wr = buf->wr;
-	uint16_t buf_size = buf->buf_size;
-	canbufferType *buff = buf->buf_ptr;
-
-	uint16_t num_bytes = CanfifoBuf_getFree(buf);
-	if (num_bytes > len)
-		num_bytes = len;
-
-	if (num_bytes < 1)
-		return 0;               // return number of bytes copied
-
-	uint8_t *p = (uint8_t *) data;
-	uint16_t i = 0;
-
-	while (num_bytes > 0) {
-		uint16_t j = buf_size - wr;
-		if (j > num_bytes)
-			j = num_bytes;
-		memcpy(buff + wr, p + i, j);
-		i += j;
-		num_bytes -= j;
-		wr += j;
-		if (wr >= buf_size)
-			wr = 0;
-	}
-
-	buf->wr = wr;
-
-	return i;                   // return number of bytes copied
-}
-
-void CanfifoBuf_init(t_fifo_buffercan *buf, const canbufferType *buffer,const uint16_t buffer_size)
+void CanfifoBuf_init(t_fifo_buffercan *buf, const CanardCANFrame *buffer,const uint16_t buffer_size)
 {
-	buf->buf_ptr = (canbufferType *) buffer;
+	buf->buf_ptr = (CanardCANFrame *) buffer;
 	buf->rd = 0;
 	buf->wr = 0;
 	buf->buf_size = buffer_size;

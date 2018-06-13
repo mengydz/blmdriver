@@ -25,52 +25,37 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#ifndef _FIFO_BUFFER_H_
-#define _FIFO_BUFFER_H_
+#ifndef _FIFO_BUFFER_CAN_H_
+#define _FIFO_BUFFER_CAN_H_
 #ifdef __cplusplus
  extern "C" {
 #endif
 #include "stdint.h"
+#include "canard.h"
 
 // *********************
-typedef struct
-{
-	uint32_t id;
-	uint8_t data[8];
-	uint8_t data_len;
-}canbufferType;
+//typedef struct
+//{
+//	uint32_t id;
+//	uint8_t data[8];
+//	uint8_t data_len;
+//}CanardCANFrame;
 
 typedef struct
 {
-	canbufferType *buf_ptr;
+	CanardCANFrame *buf_ptr;
     volatile uint16_t rd;
     volatile uint16_t wr;
     uint16_t buf_size;
 } t_fifo_buffercan;
 
 // *********************
-
-//uint16_t CanCanfifoBuf_getSize(t_fifo_buffercan *buf);
-//
-//uint16_t CanfifoBuf_getUsed(t_fifo_buffercan *buf);
-//uint16_t CanfifoBuf_getFree(t_fifo_buffercan *buf);
-//
-//void CanfifoBuf_clearData(t_fifo_buffercan *buf);
-//void CanfifoBuf_removeData(t_fifo_buffercan *buf, uint16_t len);
-//
-//int16_t CanfifoBuf_getBytePeek(t_fifo_buffercan *buf);
-//int16_t CanfifoBuf_getByte(t_fifo_buffercan *buf);
-//
-//uint16_t CanfifoBuf_getDataPeek(t_fifo_buffercan *buf, void *data, uint16_t len);
-//uint16_t CanfifoBuf_getData(t_fifo_buffercan *buf, void *data, uint16_t len);
-//
-//uint16_t CanfifoBuf_putByte(t_fifo_buffercan *buf, const uint8_t b);
-//
-//uint16_t CanfifoBuf_putData(t_fifo_buffercan *buf, const void *data, uint16_t len);
-//
-//void CanfifoBuf_init(t_fifo_buffercan *buf, const void *buffer, const uint16_t buffer_size);
-//
-//void CanfifoBuf_flush(t_fifo_buffercan *buf);
+void CanfifoBuf_init(t_fifo_buffercan *buf, const CanardCANFrame *buffer,const uint16_t buffer_size);
+CanardCANFrame* CanfifoBuf_getByte(t_fifo_buffercan *buf);
+uint16_t CanfifoBuf_getSize(t_fifo_buffercan *buf);
+uint16_t CanfifoBuf_getUsed(t_fifo_buffercan *buf);
+CanardCANFrame* CanfifoBuf_getByte(t_fifo_buffercan *buf);
+uint16_t CanfifoBuf_putByte(t_fifo_buffercan *buf, const CanardCANFrame b);
 
 #ifdef __cplusplus
  }

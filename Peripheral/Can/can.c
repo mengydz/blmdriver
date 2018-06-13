@@ -168,7 +168,7 @@ void HAL_CAN_TxCpltCallback(CAN_HandleTypeDef* hcan)
 
 void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 {
-    CanardCANFrame rx_frame;
+	CanardCANFrame rx_frame;
 	if(hcan->Instance == CAN1)
 	{
 		rx_frame.id = hcan->pRxMsg->ExtId;
@@ -185,7 +185,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 
 		rx_frame.data_len = (uint8_t) hcan->pRxMsg->DLC;
 		memcpy(rx_frame.data, hcan->pRxMsg->Data, rx_frame.data_len);
-//		canardHandleRxFrame(&canard, &rx_frame, timestamp);
+		CanfifoBuf_putByte(&CanRxBuffer,rx_frame);
+//		canardHandleRxFrame(&canard, &rx_frame, 1);
 	}else if(hcan->Instance == CAN2)
 	{
 		rx_frame.id = hcan->pRx1Msg->ExtId;

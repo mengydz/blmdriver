@@ -15,12 +15,9 @@
 #include "driver_stm32.h"
 #include "global.h"
 #include "gimbal_global_data.h"
- 
-extern uint8_t GetSysInfo;
-extern ModulesStatusInfo SysStatusInfo;
+#include "fifo_buffer_can.h"
 
-void CanardMainInit(void);
-void SetGimbalAngle(void);
+#define CanRxQueueBufferSize	32
 
 #define CANARD_STM32_GIMBAL_NODE_ID 40
 
@@ -32,6 +29,15 @@ void SetGimbalAngle(void);
 #define UAVCAN_AIRDATA_GIMBALCONTROLDATA_MESSAGE_SIZE           6
 #define UAVCAN_AIRDATA_GIMBALCONTROLDATA_DATA_TYPE_ID           20554
 #define UAVCAN_AIRDATA_GIMBALCONTROLDATA_TYPE_SIGNATURE         0x3B058FA5B150C5BEULL
+
+extern uint8_t GetSysInfo;
+extern ModulesStatusInfo SysStatusInfo;
+extern CanardCANFrame CanRxQueueBuffer[CanRxQueueBufferSize];
+extern t_fifo_buffercan CanRxBuffer;
+
+void CanardRevBufferInit(void);
+void CanardMainInit(void);
+void SetGimbalAngle(void);
 
 #ifdef __cplusplus
  }
