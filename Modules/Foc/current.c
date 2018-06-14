@@ -32,7 +32,8 @@ void adc_zero(void)
 
 void motor_estimat_theta(void)
 {
-
+	motor_Estimate.Ialpha_estimate_pu = (motor_Estimate.Gctrl*(motor_Estimate.Ualpha_pll_compens - motor_Estimate.Ealpha_estimate_pu - motor_Estimate.Adjust_alpha_pu) + motor_Estimate.Fctrl * motor_Estimate.Ialpha_estimate_pu);
+	motor_Estimate.Ibeta_estimate_pu = (motor_Estimate.Gctrl*(motor_Estimate.Ubeta_pll_compens - motor_Estimate.Ebeta_estimate_pu - motor_Estimate.Adjust_beta_pu) + motor_Estimate.Fctrl * motor_Estimate.Ibeta_estimate_pu);
 	//计算电流的误差
 	motor_Estimate.Ialpha_pu_err = motor_Estimate.Ialpha_estimate_pu - motor_fbk.Ialpha_fbk_pu;
 	motor_Estimate.Ibeta_pu_err = motor_Estimate.Ibeta_estimate_pu - motor_fbk.Ibeta_fbk_pu;
@@ -68,7 +69,9 @@ void CurrentRunning(uint32_t focId,uint16_t *sample)
 
 	motor_fbk.Ialpha_fbk_pu = motor_fbk.Ia_fbk_real;
 	motor_fbk.Ibeta_fbk_pu = (2*motor_fbk.Ib_fbk_real + motor_fbk.Ia_fbk_real) / 1.7321f;
-#if 1
+	motor_Estimate.Ualpha_pll_compens = motor_Estimate.Uan_pu;
+	motor_Estimate.Ubeta_pll_compens = (2*motor_Estimate.Uan_pu + motor_Estimate.Ubn_pu) / 1.7321f;
+	#if 1
 	frame.fdata[0] = motor_fbk.Ialpha_fbk_pu * 100;
 	frame.fdata[1] = motor_fbk.Ibeta_fbk_pu * 100;
 	PIOS_COM_SendBufferNonBlocking(comDebugId, (uint8_t*)&frame, (uint16_t)sizeof(frame));

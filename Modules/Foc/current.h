@@ -40,10 +40,22 @@ typedef struct{
 	float Ebeta_estimate_pu_filt;
 	float Adjust_alpha_pu;
 	float Adjust_beta_pu;
+	//SMO控制器系数
+	float Gctrl;
+	float Fctrl;
+	float kctrl;
+	//电压输出
+	float Ualpha_pu;
+	float Ubeta_pu;
+	float Ualpha_pll_compens;
+	float Ubeta_pll_compens;
 
 	float Klsf;//低通滤波器系数
 
 	float Theta_estimate;
+
+	float Uan_pu;
+	float Ubn_pu;
 }sysEstimateVals;
 
 extern adc_result_type adc_result;
