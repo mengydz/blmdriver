@@ -22,8 +22,8 @@ void MotoTestTask(void const * argument)
 {
   portTickType xLastWakeTime;
   svpwmArrayQ12Init();
-  svpwmDri.SetMotorConfig(svpwmID,(uint32_t)&motorCfg);
   SvpwmDriverPulseUpdateFunRegister(&svpwmID,Hal_Tim_pwmOut_ID,(uint32_t)MotorSvpwmTimPulseUpdate);
+  svpwmDri.SetMotorConfig(svpwmID,(uint32_t)&motorCfg);
   MotorSwitchOn();
   //延时时间单元初始值记录
   xLastWakeTime = xTaskGetTickCount();
@@ -31,7 +31,7 @@ void MotoTestTask(void const * argument)
   {
 	vTaskDelayUntil(&xLastWakeTime,(10/portTICK_RATE_MS));
 //	svpwmDri.setUse(svpwmID);
-	svpwmDri.outPut(svpwmID,0.1,0,GetMillis(),false);
+	svpwmDri.outPut(svpwmID,0.15,0,GetMillis(),false);
 //	svpwmDri.releaseUse(svpwmID);
   }
 }

@@ -146,15 +146,15 @@ void CanardmainTask(void const * argument)
 		canardHandleRxFrame(&canard, CanfifoBuf_getByte(&CanRxBuffer), SendFreqCnt);
 	}
 	/**********send***************************************************/
-    if(SendFreqCnt%10 == 0)
+	if(SendFreqCnt%5 == 0)
     {
-    	SetGimbalAngle();
+//    	SetGimbalAngle();
     }
-    if(SendFreqCnt%100 == 5)
+    if(SendFreqCnt%10 == 5)
     {
 
     }
-    if(SendFreqCnt%200 == 0)
+    if(SendFreqCnt%100 == 0)
     {
 
     }
