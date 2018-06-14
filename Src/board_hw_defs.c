@@ -466,7 +466,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 				.OCNPolarity	= TIM_OCNPOLARITY_HIGH,
 				.OCNIdleState	= TIM_OCNIDLESTATE_RESET,
 				.OCIdleState	= TIM_OCIDLESTATE_RESET,
-				.Pulse 			= 1000,
+				.Pulse 			= 1930,
 			},
 			.CCTimChannel = TIM_CHANNEL_1,
 			.TimChannel[MotorPhase1] = TIM_CHANNEL_2,

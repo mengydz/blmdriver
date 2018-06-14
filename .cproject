@@ -66,6 +66,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Notify}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.2184025" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
@@ -94,6 +96,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Notify}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1094701276" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
@@ -122,6 +126,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Notify}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.279909703" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
@@ -235,6 +241,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Led}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.590620688" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
@@ -265,6 +273,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Led}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.32101740" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>
@@ -295,6 +305,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Peripheral/Adc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Led}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Motor}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Foc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/blmdriver/Modules/Serialplot}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs.1141642198" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="STM32F405xx"/>

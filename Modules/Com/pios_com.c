@@ -899,8 +899,8 @@ bool PIOS_COM_Available(uint32_t com_id)
 #include "protocol.h"
 int _write(int fd, char *ptr, int len)
 {
-//	fifoBuf_putData(&gbConsoleBuffer,(uint8_t *)ptr, len);
-	PIOS_COM_SendBufferNonBlocking(comDebugId, (uint8_t *)ptr, len);
+	fifoBuf_putData(&gbConsoleBuffer,(uint8_t *)ptr, len);
+//	PIOS_COM_SendBufferNonBlocking(comDebugId, (uint8_t *)ptr, len);
 	return len;
 }
 

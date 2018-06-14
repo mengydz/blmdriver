@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 #include "global.h"
-
+#include "pios_com.h"
 
 #define FRAME_LEN		6
 

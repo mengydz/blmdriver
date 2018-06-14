@@ -7,6 +7,7 @@
 #include "adc.h"
 #include "tim_PWM_Output.h"
 #include "FreeRTOS.h"
+#include "current.h"
 
 uint32_t hal_ADC_pwmout_sample_id;
 uint32_t hal_ADC_Vol_ID;
@@ -84,6 +85,7 @@ void ADCSampleInit(uint32_t *adc_id,const GIMBAL_ADC_CFG *cfg,bool isDmaUsed)
 			}
 		}
 		HAL_ADC_Start_DMA(dev->cfg->hadc,(uint32_t*)dev->ADCSampleArr,dev->cfg->channelNum);
+		__HAL_DMA_DISABLE_IT(dev->cfg->hdma,DMA_IT_HT);
 	}
 	*adc_id = (uint32_t)dev;
 
@@ -127,27 +129,23 @@ uint32_t GetAdcSampleResoltuion(uint32_t adc_id)
 	return dev->cfg->hadc->Init.Resolution;
 }
 
-void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+typedef struct
 {
-        GimbalADCDev *dev = (GimbalADCDev *)hal_ADC_pwmout_sample_id;
-        ADCValidate(dev);
-        if(hadc == dev->cfg->hadc)
-        {
-//            CurrentRunning(dev->FocDriverId,dev->ADCSampleArr);
-//            break;
-        }
-}
-
+  __IO uint32_t ISR;   /*!< DMA interrupt status register */
+  __IO uint32_t Reserved0;
+  __IO uint32_t IFCR;  /*!< DMA interrupt flag clear register */
+} DMA_Base_Registers;
 void DMA2_Stream0_IRQHandler(void)
 {
-	GimbalADCDev *dev;
-	dev = (GimbalADCDev *)DMA2_Stream0_id;
-	HAL_DMA_IRQHandler(dev->cfg->hdma);
-}
-
-void DMA2_Stream1_IRQHandler(void)
-{
-    GimbalADCDev *dev;
-    dev = (GimbalADCDev *)DMA2_Stream1_id;
-    HAL_DMA_IRQHandler(dev->cfg->hdma);
+	GimbalADCDev *dev = (GimbalADCDev *)DMA2_Stream0_id;
+	DMA_Base_Registers *regs = (DMA_Base_Registers *)dev->cfg->hdma->StreamBaseAddress;
+	if ((regs->ISR & (DMA_FLAG_TCIF0_4 << dev->cfg->hdma->StreamIndex)) != RESET)
+	{
+		if(__HAL_DMA_GET_IT_SOURCE(dev->cfg->hdma, DMA_IT_TC) != RESET)
+		{
+			/* Clear the transfer complete flag */
+			regs->IFCR = DMA_FLAG_TCIF0_4 << dev->cfg->hdma->StreamIndex;
+			CurrentRunning(dev->FocDriverId,dev->ADCSampleArr);
+		}
+	}
 }
