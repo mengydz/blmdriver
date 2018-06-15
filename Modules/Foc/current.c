@@ -1,6 +1,7 @@
 #include "current.h"
 #include "serialplot.h"
 #include <math.h>
+#include "timer.h"
 
 adc_result_type adc_result;
 sysFbkVals motor_fbk;
@@ -47,6 +48,7 @@ void motor_estimat_theta(void)
 	motor_Estimate.Theta_estimate = atan2f(motor_Estimate.Ebeta_estimate_pu_filt,-motor_Estimate.Ealpha_estimate_pu_filt);
 }
 
+volatile uint64_t micro_start,micro_diff,micro_now;
 void CurrentRunning(uint32_t focId,uint16_t *sample)
 {
 	static uint8_t state;
@@ -71,11 +73,18 @@ void CurrentRunning(uint32_t focId,uint16_t *sample)
 	motor_fbk.Ibeta_fbk_pu = (2*motor_fbk.Ib_fbk_real + motor_fbk.Ia_fbk_real) / 1.7321f;
 	motor_Estimate.Ualpha_pll_compens = motor_Estimate.Uan_pu;
 	motor_Estimate.Ubeta_pll_compens = (2*motor_Estimate.Uan_pu + motor_Estimate.Ubn_pu) / 1.7321f;
+	micro_now = GetMicro();
+	micro_diff = micro_now - micro_start;
+	micro_start = micro_now;
+
 	#if 1
-	frame.fdata[0] = motor_fbk.Ialpha_fbk_pu * 100;
-	frame.fdata[1] = motor_fbk.Ibeta_fbk_pu * 100;
+	frame.fdata[0] = micro_diff;
+	frame.fdata[1] = 60;
+	frame.fdata[2] = 0;
+	frame.fdata[3] = 0;
 	PIOS_COM_SendBufferNonBlocking(comDebugId, (uint8_t*)&frame, (uint16_t)sizeof(frame));
-#endif
+	#endif
+
 }
 
 

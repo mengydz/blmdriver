@@ -1,6 +1,7 @@
 #include "board_hw_defs.h"
 #include "stm32f4xx_hal.h"
 #include "canardmain.h"
+#include "global.h"
 
 void hal_rcc_clk_enable(uint32_t instance)
 {
@@ -145,7 +146,7 @@ DMA_HandleTypeDef _com2DmaTx = {
 UART_HandleTypeDef _com1Uart = {
 	.Instance = USART1,
 	.Init = {
-		.BaudRate = 115200,
+		.BaudRate = UART1Buadrate,
 		.WordLength = UART_WORDLENGTH_8B,
 		.StopBits = UART_STOPBITS_1,
 		.Parity = UART_PARITY_NONE,
@@ -324,8 +325,8 @@ TIM_HandleTypeDef	PwmOutTim[] = {
 	[MotorOutPutChannel1] = {
 		.Instance = TIM8,
 		.Init = {
-			.Prescaler = 3-1,
-			.Period = 2000,
+			.Prescaler = 2-1,//168-1
+			.Period = 2100,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_CENTERALIGNED2,//center-aligned mode selection
 		},
@@ -333,7 +334,7 @@ TIM_HandleTypeDef	PwmOutTim[] = {
 	[MotorOutPutChannel2] = {
 		.Instance = TIM1,
 		.Init = {
-			.Prescaler = 3-1,
+			.Prescaler = 84-1,
 			.Period = 2000,
 			.ClockDivision = TIM_CLOCKDIVISION_DIV1,
 			.CounterMode = TIM_COUNTERMODE_CENTERALIGNED2,//center-aligned mode selection
@@ -466,7 +467,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 				.OCNPolarity	= TIM_OCNPOLARITY_HIGH,
 				.OCNIdleState	= TIM_OCNIDLESTATE_RESET,
 				.OCIdleState	= TIM_OCIDLESTATE_RESET,
-				.Pulse 			= 1930,
+				.Pulse 			= 2050,
 			},
 			.CCTimChannel = TIM_CHANNEL_1,
 			.TimChannel[MotorPhase1] = TIM_CHANNEL_2,
@@ -572,7 +573,7 @@ const GIMBAL_TIM_TIMER_CFG gimbalTimerCfg[] = {
 				.irq_enabled = true,
 				.irq_cfg = {
 					.irq = TIM7_IRQn,
-					.nvic_preemptPriority = IRQ_PRIO_LOW,
+					.nvic_preemptPriority = 6,
 					.nvic_subPriority = 0,
 				},
 				.irqFlagNum = 1,

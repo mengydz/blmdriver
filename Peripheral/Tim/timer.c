@@ -124,7 +124,7 @@ void TIM7_IRQHandler(void)
 		glo_50ms++;
 	}
 }
-#if 0
+#if 1
 uint64_t GetMicro(void)
 {
 	uint16_t cnt;

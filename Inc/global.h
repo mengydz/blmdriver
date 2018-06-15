@@ -3,6 +3,7 @@
 #include "string.h"
 
 
+#define UART1Buadrate		256000
 
 #define COMPILE_YEAR		2018
 #define COMPILE_MONTH		5

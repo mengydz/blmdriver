@@ -42,6 +42,7 @@ void SerialPlotFrameInput(int16_t fdata[8]);
 void SerialPlotFramePlotHalfWord2(int16_t fdata,int16_t fdata2);
 extern CurrentLoopPlotBuff clPlotBuff;
 extern SerialPlotFrameSingle frame;
+extern SerialPlotFrame freamcrc;
 //extern volatile  SerialPlotFrame	frame[30];
 
 #ifdef __cplusplus

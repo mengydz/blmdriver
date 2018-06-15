@@ -23,6 +23,11 @@ SerialPlotFrameSingle frame = {
 		.frameHeader1 = 0XAA,
 		.frameHeader2 = 0XBB,
 };
+
+SerialPlotFrame	freamcrc = {
+		.frameHeader1 = 0xAA,
+		.frameHeader2 = 0xBB,
+};
 void SerialPlotFrameInput(int16_t fdata[8])
 {
 
