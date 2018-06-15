@@ -15,7 +15,6 @@
 #include "global.h"
 extern uint32_t Hal_Timer_ID;
 extern uint32_t Hal_Print_Tim_ID,Hal_motor_Tim_ID,Hal_can_Tim_ID;;
-extern uint64_t halSysTickCount;
 
 typedef struct{
 	GIMBAL_TIM_TIMER_CFG	*TimerCfg;

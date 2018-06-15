@@ -10,7 +10,6 @@
 
 uint32_t Hal_Timer_ID;
 uint32_t Hal_Print_Tim_ID,Hal_motor_Tim_ID,Hal_can_Tim_ID;
-uint64_t halSysTickCount = 0;
 
 uint32_t Hal_Timer_4,Hal_Timer_5,Hal_Timer_6,Hal_Timer_7;
 volatile uint32_t glo_50ms=0;

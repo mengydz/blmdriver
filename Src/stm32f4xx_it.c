@@ -37,7 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN 0 */
-extern uint64_t halSysTickCount;
+
 
 /* USER CODE END 0 */
 
@@ -156,7 +156,7 @@ void SysTick_Handler(void)
   HAL_IncTick();
   osSystickHandler();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-  halSysTickCount++;
+
   /* USER CODE END SysTick_IRQn 1 */
 }
 

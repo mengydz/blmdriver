@@ -64,12 +64,12 @@ void MX_FREERTOS_Init(void) {
 void StartTask(void const * argument)
 {
   taskENTER_CRITICAL();
-//  xTaskCreate((TaskFunction_t )ProtocolTask,
-//              (const char *  )"Protocol",
-//              (uint16_t       )Proto_STK_SIZE,
-//              (void *         )NULL,
-//              (UBaseType_t    )Proto_TASK_PRIO,
-//              (TaskHandle_t * )&xHandleTaskProto);
+  xTaskCreate((TaskFunction_t )ProtocolTask,
+              (const char *  )"Protocol",
+              (uint16_t       )Proto_STK_SIZE,
+              (void *         )NULL,
+              (UBaseType_t    )Proto_TASK_PRIO,
+              (TaskHandle_t * )&xHandleTaskProto);
 
   xTaskCreate((TaskFunction_t )NotifyTask,
               (const char *  )"Notify",
