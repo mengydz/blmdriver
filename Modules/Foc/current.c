@@ -6,12 +6,20 @@
 adc_result_type adc_result;
 sysFbkVals motor_fbk;
 sysEstimateVals motor_Estimate;
+MotorParamVars motor;
 
 void MotorInit(void)
 {
 	adc_result.haszero = false;
 	motor_fbk.I_fbk_factor = 0.0805664f;
 	motor_Estimate.Klsf = 0.5f;
+
+	motor.pwm_freq = PWM_FREQUENCE_VAL;
+	motor.pwm_Ts = 1.0f/PWM_FREQUENCE_VAL;
+
+	motor.Motor_Rs_pu = MOTOR_RS / R_base;
+	motor.Motor_Ld_pu = MOTOR_LD / L_base;
+	motor.Motor_Lq_pu = MOTOR_LQ / L_base;
 }
 
 void adc_zero(void)
