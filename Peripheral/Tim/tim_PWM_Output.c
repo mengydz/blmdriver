@@ -7,6 +7,7 @@
 #include "tim_PWM_Output.h"
 #include "driver_stm32.h"
 #include "FreeRTOS.h"
+#include "current.h"
 
 uint32_t Hal_Tim_pwmOut_ID;
 
@@ -96,11 +97,13 @@ void MotorSvpwmTimPulseUpdate(uint32_t svpwm_tim_id,uint16_t *pulse)
 	    }
 		MotorSvpwmTimPulseSet(pwmout_dev->MotorCfg->tim->Instance,pwmout_dev->MotorCfg->TimChannel[j],pulse[j]);
 	}
+	motor_Estimate.Ua_pu = (1050 - pulse[0])*12.0f/1050;
+	motor_Estimate.Ub_pu = (1050 - pulse[1])*12.0f/1050;
+	motor_Estimate.Uc_pu = (1050 - pulse[2])*12.0f/1050;
+
+	motor_Estimate.Uan_pu = (motor_Estimate.Ua_pu * 2 - motor_Estimate.Ub_pu - motor_Estimate.Uc_pu)/3.0f;
+	motor_Estimate.Ubn_pu = (motor_Estimate.Ub_pu * 2 - motor_Estimate.Ua_pu - motor_Estimate.Uc_pu)/3.0f;
 }
 
 
-void TIM1_UP_TIM10_IRQHandler(void)
-{
-	//tim_irq_handler(Hal_Tim_1);
-}
 

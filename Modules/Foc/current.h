@@ -5,8 +5,8 @@
 #define PI	3.1415926f
 
 #define MOTOR_RS			4.2f
-#define MOTOR_LD			2.5f
-#define MOTOR_LQ			2.5f
+#define MOTOR_LD			0.0025f
+#define MOTOR_LQ			0.0025f
 #define MOTOR_POLES_VAL		11
 #define BASE_RPM_CNTRL_VAL	9500
 #define VDC_BUS 			12.0f						//12V的直流电压
@@ -76,6 +76,10 @@ typedef struct{
 
 	float Uan_pu;
 	float Ubn_pu;
+
+	float Ua_pu;
+	float Ub_pu;
+	float Uc_pu;
 }sysEstimateVals;
 
 typedef struct{

@@ -35,10 +35,8 @@ void MotoTestTask(void const * argument)
   while(1)
   {
 	vTaskDelayUntil(&xLastWakeTime,(10/portTICK_RATE_MS));
-//	MotorPhase+=400;
-//	svpwmDri.setUse(svpwmID);
-//	svpwmDri.outPut(svpwmID,0.15,0,GetMillis(),false);
-//	svpwmDri.releaseUse(svpwmID);
+
+
   }
 }
 
