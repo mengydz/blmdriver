@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "svpwm.h"
 #include "current.h"
+#include "adc.h"
 /* Includes ------------------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
@@ -35,7 +36,6 @@ void MotoTestTask(void const * argument)
   while(1)
   {
 	vTaskDelayUntil(&xLastWakeTime,(10/portTICK_RATE_MS));
-
 
   }
 }

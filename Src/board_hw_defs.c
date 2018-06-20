@@ -467,7 +467,7 @@ const GIMBAL_TIM_PWMOUT_CFG gimbalPWMOutCfg[] = {
 				.OCNPolarity	= TIM_OCNPOLARITY_HIGH,
 				.OCNIdleState	= TIM_OCNIDLESTATE_RESET,
 				.OCIdleState	= TIM_OCIDLESTATE_RESET,
-				.Pulse 			= 2050,
+				.Pulse 			= 2000,
 			},
 			.CCTimChannel = TIM_CHANNEL_1,
 			.TimChannel[MotorPhase1] = TIM_CHANNEL_2,
@@ -668,14 +668,15 @@ DMA_HandleTypeDef _adc1Dma = {
 ADC_HandleTypeDef		VoltageSampleADCHandle = {
 	.Instance = ADC3,
 	.Init = {
-		.ClockPrescaler = ADC_CLOCKPRESCALER_PCLK_DIV2,
-		.Resolution		= ADC_RESOLUTION12b,
+		.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
+		.Resolution		= ADC_RESOLUTION_12B,
 		.DataAlign		= ADC_DATAALIGN_RIGHT,
 		.ScanConvMode	= DISABLE,
-		.ContinuousConvMode		= ENABLE,
+		.ContinuousConvMode		= DISABLE,
 		.DiscontinuousConvMode	= DISABLE,
 		.NbrOfConversion		= 1,
 		.ExternalTrigConv		= ADC_SOFTWARE_START,
+//		.EOCSelection = ADC_EOC_SINGLE_CONV,
 	},
 };
 
@@ -740,7 +741,7 @@ const GIMBAL_ADC_CFG gimbalVoltageSmpADCCfg = {
         .irqFlag[0] = DMA_IT_TC,
 	},
 	.sConfig[0] = {
-		.Channel      = ADC_CHANNEL_0,
+		.Channel      = ADC_CHANNEL_4,
 		.Rank         = 1,
 		.SamplingTime = ADC_SAMPLETIME_3CYCLES,
 	},

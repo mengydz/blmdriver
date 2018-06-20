@@ -28,11 +28,11 @@ SerialPlotFrame	freamcrc = {
 		.frameHeader1 = 0xAA,
 		.frameHeader2 = 0xBB,
 };
-void SerialPlotFrameInput(int16_t fdata[8])
+void SerialPlotFrameInput(float fdata[2])
 {
 
-#if 1
-	for(uint8_t i = 0;i<8;i++)
+#if 0
+	for(uint8_t i = 0;i<2;i++)
 	{
 		frame.fdata[i] = *(fdata+i);
 	}

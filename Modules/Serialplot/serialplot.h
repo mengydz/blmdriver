@@ -34,10 +34,10 @@ typedef struct{
 typedef struct{
 	uint8_t		frameHeader1;
 	uint8_t		frameHeader2;
-	int16_t		fdata[8];
+	float		fdata[2];
 }__attribute__((packed))SerialPlotFrameSingle;
 
-void SerialPlotFrameInput(int16_t fdata[8]);
+void SerialPlotFrameInput(float fdata[2]);
 
 void SerialPlotFramePlotHalfWord2(int16_t fdata,int16_t fdata2);
 extern CurrentLoopPlotBuff clPlotBuff;
